@@ -39,6 +39,7 @@ color vertColorArray[] = new color[144];
 void setup()
 {
   size(100, 144, P2D);
+  colorMode(HSB);
 
   // Connect to the local instance of fcserver
   opc = new OPC(this, "127.0.0.1", 7890);
@@ -222,8 +223,8 @@ void draw()
 
   case 14:
     background(0);
-    println("0:" + ball[0].pos + " direction:" + ball[0].direction);
-    println("1:" + ball[1].pos + " direction:" + ball[1].direction);
+    //println("0:" + ball[0].pos + " direction:" + ball[0].direction);
+    //println("1:" + ball[1].pos + " direction:" + ball[1].direction);
     for (int i=0; i<6; i++)
     {
       ball[i].drawToScreen();
@@ -240,7 +241,7 @@ void draw()
         }
       }
     }
-    println();
+    //println();
     break;
   }
 }
@@ -692,11 +693,11 @@ void keyPressed()
   {
     scene = 14;
     background(0);
-    ball[0] = new BouncyBall((int)random(3), (int)random(144), (int)random(2), color((int)random(255), (int)random(255), (int)random(255)), random(2)+0.5);
-    ball[1] = new BouncyBall((int)random(3), (int)random(144), (int)random(2), color((int)random(255), (int)random(255), (int)random(255)), random(2)+0.5);
-    ball[2] = new BouncyBall((int)random(3), (int)random(144), (int)random(2), color((int)random(255), (int)random(255), (int)random(255)), random(2)+0.5);
-    ball[3] = new BouncyBall((int)random(3), (int)random(144), (int)random(2), color((int)random(255), (int)random(255), (int)random(255)), random(2)+0.5);
-    ball[4] = new BouncyBall((int)random(3), (int)random(144), (int)random(2), color((int)random(255), (int)random(255), (int)random(255)), random(2)+0.5);
-    ball[5] = new BouncyBall((int)random(3), (int)random(144), (int)random(2), color((int)random(255), (int)random(255), (int)random(255)), random(2)+0.5);
+    ball[0] = new BouncyBall((int)random(3), (int)random(144), (int)random(2), color((int)random(255), (int)random(255), 255), 1);
+    ball[1] = new BouncyBall((int)random(3), (int)random(144), (int)random(2), color((int)random(255), (int)random(255), 255), -1);
+    ball[2] = new BouncyBall((int)random(3), (int)random(144), (int)random(2), color((int)random(255), (int)random(255), 255), -2);
+    ball[3] = new BouncyBall((int)random(3), (int)random(144), (int)random(2), color((int)random(255), (int)random(255), 255), 1);
+    ball[4] = new BouncyBall((int)random(3), (int)random(144), (int)random(2), color((int)random(255), (int)random(255), 255), 1);
+    ball[5] = new BouncyBall((int)random(3), (int)random(144), (int)random(2), color((int)random(255), (int)random(255), 255), -3);
   }
 }
