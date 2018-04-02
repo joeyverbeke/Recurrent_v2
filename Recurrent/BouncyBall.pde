@@ -1,15 +1,18 @@
 public class BouncyBall {
   int pillar;
-  int pos;
+  float pos;
   int direction; //0 = up 1 = down 
   color ballColor;
   float speed;
   int frameLastMoved = 0;
+  float dimPercentage = 0.9;
+  float oscAngle = 0.0;
+  float oscCenter = 0.0;
 
-  ArrayList<Integer> prevPos = new ArrayList<Integer>();
-  int tailSize = 20;
+  ArrayList<Float> prevPos = new ArrayList<Float>();
+  int tailSize = 10;
 
-  public BouncyBall(int _pillar, int startPos, color _ballColor)
+  public BouncyBall(int _pillar, float startPos, color _ballColor)
   {
     pillar = _pillar;
     pos = startPos;
@@ -17,7 +20,7 @@ public class BouncyBall {
     ballColor = _ballColor;
   }
 
-  public BouncyBall(int _pillar, int startPos, int startDirection, color _ballColor)
+  public BouncyBall(int _pillar, float startPos, int startDirection, color _ballColor)
   {
     pillar = _pillar;
     pos = startPos;
@@ -25,13 +28,27 @@ public class BouncyBall {
     ballColor = _ballColor;
   }
 
-  public BouncyBall(int _pillar, int startPos, int startDirection, color _ballColor, float _speed)
+  public BouncyBall(int _pillar, float startPos, int startDirection, color _ballColor, float _speed)
   {
     pillar = _pillar;
     pos = startPos;
     direction = startDirection;
     ballColor = _ballColor;
+    
+    if(_speed <= 0.1)
+      _speed = 0.1;
     speed = _speed;
+    println(speed);
+  }
+  
+  public void setDimPercentage(float _dim)
+  {
+     dimPercentage = _dim; 
+  }
+  
+  public void setTailSize(int _tailSize)
+  {
+    tailSize = _tailSize;
   }
 
   public void drawToScreen()
@@ -74,6 +91,7 @@ public class BouncyBall {
   {
     if (direction == 1)
     {
+      /*
       if (speed >= 1)
       {
         pos+=speed;
@@ -87,11 +105,15 @@ public class BouncyBall {
           frameLastMoved = frameCount;
         }
       }
+      */
+      
+      pos += speed;
 
       if (pos >= 144)
         direction = 0;
     } else
     {
+      /*
       if (speed >= 1)
       {
         pos-=speed;
@@ -104,6 +126,9 @@ public class BouncyBall {
           frameLastMoved = frameCount;
         }
       }
+      */
+      
+      pos -= speed;
 
       if (pos <= 0)
         direction = 1;
@@ -120,7 +145,7 @@ public class BouncyBall {
       //prevPos.add(pos);
   }
 
-  public void move(int speed)
+  public void move(float speed)
   {
     if (direction == 1)
     {
@@ -144,7 +169,7 @@ public class BouncyBall {
   {
     if (ball.pillar == this.pillar)
     {
-      if (ball.pos == this.pos)
+      if (abs(ball.pos - this.pos) < 0.5)
         return true;
       else
         return false;
@@ -158,8 +183,29 @@ public class BouncyBall {
     float hue = hue(oldColor);
     float saturation = saturation(oldColor);
 
-    brightness *= 0.9;
+    brightness *= dimPercentage;
 
     return color(hue, saturation, brightness);
+  }
+  
+  public void oscillate(float _oscCenter, float oscSpeed, float oscAmp)
+  {
+    _oscCenter += sin(oscAngle) * oscAmp;
+    pos = _oscCenter;
+    
+    oscAngle += oscSpeed;
+    
+    updateTail();
+  }
+  
+  public void updateTail()
+  {
+    if (prevPos.size() >= tailSize)
+      prevPos.remove(0);
+
+    if(prevPos.size() == 0)
+      prevPos.add(pos);
+    else if (prevPos.get(prevPos.size()-1) != pos)
+      prevPos.add(pos);
   }
 }
