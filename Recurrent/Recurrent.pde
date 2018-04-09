@@ -42,6 +42,7 @@ color ORANGE;
 color YELLOW;
 color BLUE;
 color WHITE; 
+color GREEN;
 color LIGHT_ORANGE; 
 color LIGHT_BLUE;
 color LIGHT_PURPLE;
@@ -51,13 +52,14 @@ color LIGHT_GREEN;
 void setup()
 {
   size(100, 144, P2D);
-  colorMode(HSB, 1.0, 1.0, 1.0);
+  colorMode(HSB, 1.0, 1.0, 1.0, 1.0);
 
    RED = color(1.0, 1.0, 1.0);
    ORANGE = color(0.0917, 1.0, 1.0);
    YELLOW = color(0.0667, 1.0, 1.0);
    BLUE = color(0.6667, 1.0, 1.0);
    WHITE = color(1.0, 1.0, 1.0);
+   GREEN = color(0.3334, 1.0, 1.0);
    LIGHT_ORANGE = color(0.0917, 0.5, 1.0);
    LIGHT_BLUE = color(0.5556, 0.5, 1.0);
    LIGHT_PURPLE = color(0.75, 0.5, 1.0);
@@ -134,19 +136,19 @@ void draw()
     curtains(true, 1, ORANGE);
     
   case 6:
-    curtains(false, 1, color(0, 0, 255));
+    curtains(false, 1, BLUE);
     break;
 
   case 7: 
-    gaussianSpeckle(color(255, 140, 0), color(255, 255, 0, 30));
+    gaussianSpeckle(ORANGE, YELLOW);
     break;
 
   case 8:
-    gaussianSpeckle(color(255, 140, 0), color(255, 0, 0, 30));
+    gaussianSpeckle(ORANGE, RED);
     break;
 
   case 9:
-    gaussianSpeckle(color(0, 0, 255), color(255, 255, 255, 30), color(0, 255, 0, 30));
+    gaussianSpeckle(BLUE, WHITE, color(0, 255, 0, 30));
     break;
 
   case 10:
@@ -420,11 +422,13 @@ void unfoldFromMiddle(color backgroundColor, color unfoldColor, int speed)
 
 void gaussianSpeckle(color backgroundColor, color speckleColor)
 {  
+  color speckleWithAlpha = color(hue(speckleColor), saturation(speckleColor), brightness(speckleColor), 0.3);
+  
   //only set the background the first time
   if (get(0, 0) != backgroundColor)
     background(backgroundColor);
 
-  fill(speckleColor);
+  fill(speckleWithAlpha);
   noStroke();
 
   for (int x=0; x<numRows; x++)
