@@ -36,10 +36,33 @@ float gradientPos = 0.0;
 float gradientDelta = 0.003;
 color vertColorArray[] = new color[144];
 
+////COLORS
+color RED;
+color ORANGE;
+color YELLOW;
+color BLUE;
+color WHITE; 
+color LIGHT_ORANGE; 
+color LIGHT_BLUE;
+color LIGHT_PURPLE;
+color LIGHT_PINK;
+color LIGHT_GREEN;
+
 void setup()
 {
   size(100, 144, P2D);
-  colorMode(HSB, 1.0);
+  colorMode(HSB, 1.0, 1.0, 1.0);
+
+   RED = color(1.0, 1.0, 1.0);
+   ORANGE = color(0.0917, 1.0, 1.0);
+   YELLOW = color(0.0667, 1.0, 1.0);
+   BLUE = color(0.6667, 1.0, 1.0);
+   WHITE = color(1.0, 1.0, 1.0);
+   LIGHT_ORANGE = color(0.0917, 0.5, 1.0);
+   LIGHT_BLUE = color(0.5556, 0.5, 1.0);
+   LIGHT_PURPLE = color(0.75, 0.5, 1.0);
+   LIGHT_PINK = color(0.8334, 0.5, 1.0);
+   LIGHT_GREEN = color(0.333, 0.5, 1.0);
 
   // Connect to the local instance of fcserver
   opc = new OPC(this, "127.0.0.1", 7890);
@@ -84,25 +107,32 @@ void setup()
 
 void draw()
 {
+  
+  
+  
   switch(scene)
   {
   case 1:
     background(0);
     randomBlocks();
     break;
+    
   case 2:
     gaussian();
     break;
+    
   case 3:
     streaks();
     break;
+    
   case 4:
     //wave();
-    wave(color(255), color(255), 100);
+    wave(WHITE, WHITE, 100);
     break;
+    
   case 5:
-    curtains(true, 1, color(255, 140, 0));
-    break;
+    curtains(true, 1, ORANGE);
+    
   case 6:
     curtains(false, 1, color(0, 0, 255));
     break;
@@ -351,13 +381,15 @@ void gradient(color color1, color color2, color color3, color color4, color colo
 
 void wave(color backgroundColor, color waveColor, float speed)
 {
+  background(WHITE);
   if (get(0, 0) != backgroundColor)
-    background(backgroundColor);
+    background(WHITE);
 
   for (int x=0; x<144; x++)
   {
     waveAmplitude[x][0] += 0.005;
-    fill((int) 255 * abs(cos(waveAmplitude[x][0])));
+    //fill((int) 255 * abs(cos(waveAmplitude[x][0])));
+    fill(1.0, 0, abs(cos(waveAmplitude[x][0])));
     rect(0, x, width, 1);
   }
 }
