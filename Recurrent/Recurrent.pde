@@ -7,7 +7,7 @@ int ledCount = 0;
 int numRows = 3;
 int numColumns = 6;
 
-int scene = 2;
+int testScene = 2;
 
 boolean squares[][] = new boolean[numRows][numColumns];
 color squareColors[][] = new color[numRows][numColumns];
@@ -17,7 +17,7 @@ color gaussianColor[] = new color[numRows];
 int streak_y = 0;
 int streak_x = 0;
 int streakColor = 0;
-int streakScene = 0;
+int streaktestScene = 0;
 int numTimesStreaked = 0;
 
 float waveAmplitude[][] = new float[144][3];
@@ -36,6 +36,9 @@ float gradientPos = 0.0;
 float gradientDelta = 0.003;
 color vertColorArray[] = new color[144];
 
+float fadeInPercent[] = new float[144];
+float lineFadeInPos = 0.0;
+
 ////COLORS
 color RED;
 color ORANGE;
@@ -43,28 +46,41 @@ color YELLOW;
 color BLUE;
 color WHITE; 
 color GREEN;
+color BLACK;
+color CYAN;
+color PURPLE;
+
 color LIGHT_ORANGE; 
 color LIGHT_BLUE;
 color LIGHT_PURPLE;
 color LIGHT_PINK;
 color LIGHT_GREEN;
 
+int scene = 0;
+int numScenes = 3;
+boolean sceneStarted[] = new boolean[numScenes];
+int timeEnteredScene = 0;
+
 void setup()
 {
   size(100, 144, P2D);
   colorMode(HSB, 1.0, 1.0, 1.0, 1.0);
 
-   RED = color(1.0, 1.0, 1.0);
-   ORANGE = color(0.0917, 1.0, 1.0);
-   YELLOW = color(0.0667, 1.0, 1.0);
-   BLUE = color(0.6667, 1.0, 1.0);
-   WHITE = color(1.0, 1.0, 1.0);
-   GREEN = color(0.3334, 1.0, 1.0);
-   LIGHT_ORANGE = color(0.0917, 0.5, 1.0);
-   LIGHT_BLUE = color(0.5556, 0.5, 1.0);
-   LIGHT_PURPLE = color(0.75, 0.5, 1.0);
-   LIGHT_PINK = color(0.8334, 0.5, 1.0);
-   LIGHT_GREEN = color(0.333, 0.5, 1.0);
+  RED = color(1.0, 1.0, 1.0);
+  ORANGE = color(0.0917, 1.0, 1.0);
+  YELLOW = color(0.1667, 1.0, 1.0);
+  BLUE = color(0.6667, 1.0, 1.0);
+  WHITE = color(0, 0, 1.0);
+  GREEN = color(0.3334, 1.0, 1.0);
+  BLACK = color(0, 0, 0);
+  CYAN = color(0.5, 1.0, 1.0);
+  PURPLE = color(0.75, 1.0, 1.0);
+
+  LIGHT_ORANGE = color(0.0917, 0.5, 1.0);
+  LIGHT_BLUE = color(0.5556, 0.5, 1.0);
+  LIGHT_PURPLE = color(0.75, 0.5, 1.0);
+  LIGHT_PINK = color(0.8334, 0.5, 1.0);
+  LIGHT_GREEN = color(0.333, 0.5, 1.0);
 
   // Connect to the local instance of fcserver
   opc = new OPC(this, "127.0.0.1", 7890);
@@ -76,7 +92,7 @@ void setup()
     for (int x=0; x<numRows; x++)
     {
       squares[x][y] = false;
-      squareColors[x][y] = color(0, 0, 0);
+      squareColors[x][y] = BLACK;
     }
   }
 
@@ -85,7 +101,7 @@ void setup()
     gaussianColor[x] = color((int)random(255), (int)random(255), (int)random(255), 10);
   }
 
-  if (scene == 2)
+  if (testScene == 2)
   {
     stroke(255);
     fill(255);
@@ -101,40 +117,101 @@ void setup()
 
   for (int i=0; i<144; i++)
   {
-    vertColorArray[i] = color(0, 0, 0);
+    vertColorArray[i] = BLACK;
+    fadeInPercent[i] = 0;
+  }
+
+  for (int i=0; i<numScenes; i++)
+  {
+    sceneStarted[i] = false;
   }
 
   background(0);
 }
 
-void draw()
+void recurrent()
 {
-  
-  
-  
   switch(scene)
   {
-  case 1:
-    background(0);
-    randomBlocks();
+  case 0:
+    float speed = 0.005;
+
+    if (!sceneStarted[scene])
+    {
+      for (int i=0; i<144; i++)
+      {
+        fadeInPercent[i] = i * speed * -1;
+      }
+      sceneStarted[scene] = true;
+    }
+
+    lineFadeIn(true, speed, ORANGE);
     break;
-    
+
+  case 1:
+    if (!sceneStarted[scene])
+    {
+      timeEnteredScene = millis();
+      sceneStarted[scene] = true;
+      print("entered: " + millis());
+    }
+    if (millis() - timeEnteredScene > 7000)
+    {
+      print(millis());
+      scene++;
+    }
+
+    gaussianSpeckle(ORANGE, YELLOW);
+    break;
+
+  case 2:
+    if (!sceneStarted[scene])
+    {
+      timeEnteredScene = millis();
+      sceneStarted[scene] = true;
+    }
+    if (millis() - timeEnteredScene > 7000)
+    {
+      scene++;
+    }
+
+    gaussianSpeckle(ORANGE, RED);
+    break;
+  }
+
+  //curtains(true, 1, ORANGE);
+}
+
+void draw()
+{
+  switch(testScene)
+  {
+  case 100:
+    recurrent();
+    break;
+  case 1:
+    background(YELLOW);
+    //background(0);
+    //randomBlocks();
+    break;
+
   case 2:
     gaussian();
     break;
-    
+
   case 3:
     streaks();
     break;
-    
+
   case 4:
     //wave();
     wave(WHITE, WHITE, 100);
     break;
-    
+
   case 5:
     curtains(true, 1, ORANGE);
-    
+    break;
+
   case 6:
     curtains(false, 1, BLUE);
     break;
@@ -148,11 +225,11 @@ void draw()
     break;
 
   case 9:
-    gaussianSpeckle(BLUE, WHITE, color(0, 255, 0, 30));
+    gaussianSpeckle(BLUE, WHITE, GREEN);
     break;
 
   case 10:
-    unfoldFromMiddle(color(255, 0, 0), color(255, 255, 255), 1);
+    unfoldFromMiddle(BLACK, WHITE, 1);
     break;
 
   case 11:
@@ -161,19 +238,19 @@ void draw()
 
   case 12:
     if (gradientPos <= 1)
-      gradient(color(0, 0, (int)(gradientPos * 255)), color(255, 140, 0));
+      gradient(color(0, 0, (int)(gradientPos * 255)), ORANGE);
     else if (gradientPos > 1 && gradientPos <= 2)
     {
-      gradient(color(0, 0, 255), lerpColor(color(255, 140, 0), color(255, 0, 0), normalizeGradientPos(gradientPos)));
+      gradient(BLUE, lerpColor(ORANGE, RED, normalizeGradientPos(gradientPos)));
     } else if (gradientPos > 2 && gradientPos <= 3)
     {
-      gradient(lerpColor(color(0, 0, 255), color(255, 255, 0), gradientPos - 2), color(255, 0, 0));
+      gradient(lerpColor(BLUE, YELLOW, gradientPos - 2), RED);
     } else if (gradientPos > 3 && gradientPos <= 4)
     {
-      gradient(lerpColor(color(255, 255, 0), color(0, 255, 255), gradientPos - 3), lerpColor(color(255, 0, 0), color(255, 0, 255), normalizeGradientPos(gradientPos)));
+      gradient(lerpColor(YELLOW, CYAN, gradientPos - 3), lerpColor(RED, PURPLE, normalizeGradientPos(gradientPos)));
     } else if (gradientPos > 4 && gradientPos <= 5)
     {
-      gradient(lerpColor(color(0, 255, 255), color(0, 0, 0), gradientPos - 4), lerpColor(color(255, 0, 255), color(255, 140, 0), normalizeGradientPos(gradientPos)));
+      gradient(lerpColor(CYAN, BLACK, gradientPos - 4), lerpColor(PURPLE, ORANGE, normalizeGradientPos(gradientPos)));
     } else if (gradientPos > 5)
       gradientPos = 0;
 
@@ -184,13 +261,13 @@ void draw()
 
   case 13:
     if (gradientPos <= 1)
-      gradient(lerpColor(color(255, 0, 0), color(0, 0, 255), normalizeGradientPos(gradientPos)), lerpColor(color(255, 140, 0), color(0, 0, 255), normalizeGradientPos(gradientPos)));
+      gradient(lerpColor(RED, BLUE, normalizeGradientPos(gradientPos)), lerpColor(ORANGE, BLUE, normalizeGradientPos(gradientPos)));
     else if (gradientPos > 1 && gradientPos <= 2)
     {
-      gradient(color(0, 0, 255), lerpColor(color(0, 0, 255), color(255, 140, 0), normalizeGradientPos(gradientPos)), color(0, 0, 255));
+      gradient(BLUE, lerpColor(BLUE, ORANGE, normalizeGradientPos(gradientPos)), BLUE);
     } else if (gradientPos > 2 && gradientPos < 3)
     {
-      gradient(lerpColor(color(0, 0, 255), color(255, 255, 0), normalizeGradientPos(gradientPos)), color(255, 140, 0), lerpColor(color(0, 0, 255), color(255, 255, 0), normalizeGradientPos(gradientPos)));
+      gradient(lerpColor(BLUE, YELLOW, normalizeGradientPos(gradientPos)), ORANGE, lerpColor(BLUE, YELLOW, normalizeGradientPos(gradientPos)));
     } else if (gradientPos > 3 - gradientDelta && gradientPos <= 3 + gradientDelta)
     {
       for (int i=0; i<144; i++)
@@ -202,53 +279,53 @@ void draw()
       gradientPos+=gradientDelta;
     } else if (gradientPos > 3 + gradientDelta && gradientPos <= 4)
     {
-      gradient(color(255, 255, 0), 
-        lerpColor(vertColorArray[36], color(255, 0, 0), normalizeGradientPos(gradientPos)), 
-        color(255, 140, 0), 
-        lerpColor(vertColorArray[108], color(255, 0, 0), normalizeGradientPos(gradientPos)), 
-        color(255, 255, 0));
+      gradient(YELLOW, 
+        lerpColor(vertColorArray[36], RED, normalizeGradientPos(gradientPos)), 
+        ORANGE, 
+        lerpColor(vertColorArray[108], RED, normalizeGradientPos(gradientPos)), 
+        YELLOW);
     } else if (gradientPos > 4 && gradientPos <= 5)
     {
-      gradient(lerpColor(color(255, 255, 0), color(255, 0, 0), normalizeGradientPos(gradientPos)), 
-        lerpColor(color(255, 0, 0), color(255, 140, 0), normalizeGradientPos(gradientPos)), 
-        lerpColor(color(255, 140, 0), color(255, 255, 0), normalizeGradientPos(gradientPos)), 
-        lerpColor(color(255, 0, 0), color(255, 140, 0), normalizeGradientPos(gradientPos)), 
-        lerpColor(color(255, 255, 0), color(255, 0, 0), normalizeGradientPos(gradientPos)));
+      gradient(lerpColor(YELLOW, RED, normalizeGradientPos(gradientPos)), 
+        lerpColor(RED, ORANGE, normalizeGradientPos(gradientPos)), 
+        lerpColor(ORANGE, YELLOW, normalizeGradientPos(gradientPos)), 
+        lerpColor(RED, ORANGE, normalizeGradientPos(gradientPos)), 
+        lerpColor(YELLOW, RED, normalizeGradientPos(gradientPos)));
     } else if (gradientPos > 5 && gradientPos <= 6)
     {
-      gradient(color(255, 0, 0), 
-        lerpColor(color(255, 140, 0), color(255, 0, 0), normalizeGradientPos(gradientPos)), 
-        lerpColor(color(255, 255, 0), color(255, 140, 0), normalizeGradientPos(gradientPos)), 
-        lerpColor(color(255, 140, 0), color(255, 0, 0), normalizeGradientPos(gradientPos)), 
-        color(255, 0, 0));
+      gradient(RED, 
+        lerpColor(ORANGE, RED, normalizeGradientPos(gradientPos)), 
+        lerpColor(YELLOW, ORANGE, normalizeGradientPos(gradientPos)), 
+        lerpColor(ORANGE, RED, normalizeGradientPos(gradientPos)), 
+        RED);
     } else if (gradientPos > 6 && gradientPos <= 7)
     {
-      gradient(lerpColor(color(255, 0, 0), color(255, 140, 0), normalizeGradientPos(gradientPos)), 
-        color(255, 0, 0), 
-        lerpColor(color(255, 140, 0), color(255, 0, 0), normalizeGradientPos(gradientPos)), 
-        color(255, 0, 0), 
-        lerpColor(color(255, 0, 0), color(255, 140, 0), normalizeGradientPos(gradientPos)));
+      gradient(lerpColor(RED, ORANGE, normalizeGradientPos(gradientPos)), 
+        RED, 
+        lerpColor(ORANGE, RED, normalizeGradientPos(gradientPos)), 
+        RED, 
+        lerpColor(RED, ORANGE, normalizeGradientPos(gradientPos)));
     } else if (gradientPos > 7 && gradientPos <= 8)
     {
-      gradient(lerpColor(color(255, 140, 0), color(255, 255, 0), normalizeGradientPos(gradientPos)), 
-        lerpColor(color(255, 0, 0), color(255, 140, 0), normalizeGradientPos(gradientPos)), 
-        color(255, 0, 0), 
-        lerpColor(color(255, 0, 0), color(255, 140, 0), normalizeGradientPos(gradientPos)), 
-        lerpColor(color(255, 140, 0), color(255, 255, 0), normalizeGradientPos(gradientPos)));
+      gradient(lerpColor(ORANGE, YELLOW, normalizeGradientPos(gradientPos)), 
+        lerpColor(RED, ORANGE, normalizeGradientPos(gradientPos)), 
+        RED, 
+        lerpColor(RED, ORANGE, normalizeGradientPos(gradientPos)), 
+        lerpColor(ORANGE, YELLOW, normalizeGradientPos(gradientPos)));
     } else if (gradientPos > 8 && gradientPos <= 9)
     {
-      gradient(color(255, 255, 0), 
-        lerpColor(color(255, 140, 0), color(255, 255, 0), normalizeGradientPos(gradientPos)), 
-        lerpColor(color(255, 0, 0), color(255, 140, 0), normalizeGradientPos(gradientPos)), 
-        lerpColor(color(255, 140, 0), color(255, 255, 0), normalizeGradientPos(gradientPos)), 
-        color(255, 255, 0));
+      gradient(YELLOW, 
+        lerpColor(ORANGE, YELLOW, normalizeGradientPos(gradientPos)), 
+        lerpColor(RED, ORANGE, normalizeGradientPos(gradientPos)), 
+        lerpColor(ORANGE, YELLOW, normalizeGradientPos(gradientPos)), 
+        YELLOW);
     } else if (gradientPos > 9 && gradientPos <= 10)
     {
-      gradient(color(255, 255, 0), 
-        color(255, 255, 0), 
-        lerpColor(color(255, 140, 0), color(255, 255, 0), normalizeGradientPos(gradientPos)), 
-        color(255, 255, 0), 
-        color(255, 255, 0));
+      gradient(YELLOW, 
+        YELLOW, 
+        lerpColor(ORANGE, YELLOW, normalizeGradientPos(gradientPos)), 
+        YELLOW, 
+        YELLOW);
     }
 
     break;
@@ -275,18 +352,18 @@ void draw()
     }
     //println();
     break;
-    
-    case 15:
-      background(0);
-      
-      for(int i=0; i<6; i++)
-      {
-         ball[i].setDimPercentage(0.98 - (i*0.05));
-         ball[i].oscillate(ball[i].oscCenter, (i+1) * 0.02, 10); 
-         ball[i].drawToScreen();
-         // hi i love you //
-      }
-      break;
+
+  case 15:
+    background(0);
+
+    for (int i=0; i<6; i++)
+    {
+      ball[i].setDimPercentage(0.98 - (i*0.05));
+      ball[i].oscillate(ball[i].oscCenter, (i+1) * 0.02, 10); 
+      ball[i].drawToScreen();
+      // hi i love you //
+    }
+    break;
   }
 }
 
@@ -423,7 +500,7 @@ void unfoldFromMiddle(color backgroundColor, color unfoldColor, int speed)
 void gaussianSpeckle(color backgroundColor, color speckleColor)
 {  
   color speckleWithAlpha = color(hue(speckleColor), saturation(speckleColor), brightness(speckleColor), 0.3);
-  
+
   //only set the background the first time
   if (get(0, 0) != backgroundColor)
     background(backgroundColor);
@@ -439,19 +516,50 @@ void gaussianSpeckle(color backgroundColor, color speckleColor)
 
 void gaussianSpeckle(color backgroundColor, color speckleColor_1, color speckleColor_2)
 {  
+  color speckle1WithAlpha = color(hue(speckleColor_1), saturation(speckleColor_1), brightness(speckleColor_1), 0.3);
+  color speckle2WithAlpha = color(hue(speckleColor_2), saturation(speckleColor_2), brightness(speckleColor_2), 0.3);
+
+
   //only set the background the first time
   if (get(0, 0) != backgroundColor)
     background(backgroundColor);
 
   if (random(1) > 0.5)
-    fill(speckleColor_1);
+    fill(speckle1WithAlpha);
   else
-    fill(speckleColor_2);
+    fill(speckle2WithAlpha);
   noStroke();
 
   for (int x=0; x<numRows; x++)
   {
     rect(width/4 + (x * (width/4)), 77 + randomGaussian()*77, 1, 1);
+  }
+}
+
+void lineFadeIn(boolean bottomToTop, float speed, color _color)
+{
+  lineFadeInPos++;
+
+  for (int i=0; i<144; i++)
+  {
+    if (i==143 && fadeInPercent[i] >= 1.0)
+    {
+      scene++;
+      break;
+    }
+
+    fadeInPercent[i] += speed;
+    color colorWithAlpha = color(hue(_color), saturation(_color), fadeInPercent[i]);
+    fill(colorWithAlpha);
+    noStroke();
+
+    if (bottomToTop)
+    {
+      rect(0, height - i, width, 1);
+    } else
+    {
+      rect(0, i, width, 1);
+    }
   }
 }
 
@@ -507,7 +615,7 @@ void wave()
 
 void streaks()
 {  
-  switch(streakScene)
+  switch(streaktestScene)
   {
   case 0:
     if (streak_x >= 144)
@@ -520,7 +628,7 @@ void streaks()
         if (numTimesStreaked >= 6)
         {
           numTimesStreaked = 0;
-          streakScene = 1;
+          streaktestScene = 1;
           break;
         }
       } else
@@ -543,16 +651,16 @@ void streaks()
         switch(numTimesStreaked)
         {
         case 1:
-          streakColor = color(255);
+          streakColor = WHITE;
           break;
         case 3: 
-          streakColor = color(255, 0, 0);
+          streakColor = RED;
           break;
         case 5:
-          streakColor = color(255, 127, 0);
+          streakColor = ORANGE;
           break;
         case 7:
-          streakColor = color(255, 255, 0);
+          streakColor = YELLOW;
           break;
         }
       } else
@@ -562,7 +670,7 @@ void streaks()
       if (numTimesStreaked >= 9)
       {
         numTimesStreaked = 0;
-        streakScene = 2;
+        streaktestScene = 2;
         streak_x = 0;
         streak_y = 0;
         streakColor = color(0);
@@ -586,7 +694,7 @@ void streaks()
       {
         background(0);
         numTimesStreaked = 0;
-        streakScene = 0;
+        streaktestScene = 0;
       }
     }
     break;
@@ -604,7 +712,7 @@ void gaussian()
   {
     for (int x=0; x<numRows; x++)
     {
-      gaussianColor[x] = color((int)random(255), (int)random(255), (int)random(255), 30);
+      gaussianColor[x] = color(random(1.0), random(1.0), random(1.0), 0.3);
     }
   }
 
@@ -643,9 +751,9 @@ void randomBlocks()
       println("x:" + x + " y:" + y + " " + squares[x][y]);
       if (squares[x][y] == true)
       {
-        int randColor = (int)random(255);
-        stroke(randColor);
-        fill(randColor);
+        float randColor = random(1.0);
+        stroke(0, 0, randColor);
+        fill(0, 0, randColor);
       } else
       {
         stroke(0);
@@ -681,65 +789,65 @@ void keyPressed()
 {
   if (key == '1')
   {
-    scene = 1;
+    testScene = 1;
   } else if (key == '2')
   {
-    scene = 2;
+    testScene = 2;
     background(0);
   } else if (key == '3')
   {
-    scene = 3;
+    testScene = 3;
     background(0);
     fill(255);
   } else if (key == '4')
   {
-    scene = 4;
+    testScene = 4;
     background(0);
   } else if (key == '5')
   {
-    scene = 5;
+    testScene = 5;
     background(0);
     curtainPosition = 0;
   } else if (key == '6')
   {
-    scene = 6;
+    testScene = 6;
     background(0);
     curtainPosition = 0;
   } else if (key == '7')
   {
-    scene = 7;
+    testScene = 7;
     background(0);
     curtainPosition = 0;
   } else if (key == '8')
   {
-    scene = 8 ;
+    testScene = 8 ;
   } else if (key == '9')
   {
-    scene = 9;
+    testScene = 9;
     background(0, 0, 255);
   } else if (key == '0')
   {
-    scene = 10;
+    testScene = 10;
     unfoldPos = 0;
   } else if (key == 'q')
   {
-    scene = 11;
+    testScene = 11;
     foldInPos = 0;
   } else if (key == 'w')
   {
-    scene = 12;
+    testScene = 12;
     background(0);
     gradientPos = 0;
     frameWhenEnteredAnimation = frameCount;
   } else if (key == 'e')
   {
-    scene = 13;
+    testScene = 13;
     background(0);
     gradientPos = 0;
     frameWhenEnteredAnimation = frameCount;
   } else if (key == 'r')
   {
-    scene = 14;
+    testScene = 14;
     background(0);
     ball[0] = new BouncyBall((int)random(3), (int)random(144), (int)random(2), color((int)random(255), (int)random(255), 255), random(1.5));
     ball[1] = new BouncyBall((int)random(3), (int)random(144), (int)random(2), color((int)random(255), (int)random(255), 255), random(1.5));
@@ -747,11 +855,10 @@ void keyPressed()
     ball[3] = new BouncyBall((int)random(3), (int)random(144), (int)random(2), color((int)random(255), (int)random(255), 255), random(1.5));
     ball[4] = new BouncyBall((int)random(3), (int)random(144), (int)random(2), color((int)random(255), (int)random(255), 255), random(1.5));
     ball[5] = new BouncyBall((int)random(3), (int)random(144), (int)random(2), color((int)random(255), (int)random(255), 255), random(1.5));
-    println(); 
-  }
-  else if (key == 't')
+    println();
+  } else if (key == 't')
   {
-    scene = 15;
+    testScene = 15;
     background(0);
     ball[0] = new BouncyBall(0, random(144), (int)random(2), color(1.0, 1.0, 1.0));
     ball[1] = new BouncyBall(1, random(144), (int)random(2), color(1.0, 1.0, 1.0));
@@ -759,11 +866,15 @@ void keyPressed()
     ball[3] = new BouncyBall(0, random(144), (int)random(2), color(0.5, 0, 1.0));
     ball[4] = new BouncyBall(1, random(144), (int)random(2), color(0.5, 0, 1.0));
     ball[5] = new BouncyBall(2, random(144), (int)random(2), color(0.5, 0, 1.0));
-    for(int i=0; i<6; i++)
+    for (int i=0; i<6; i++)
     {
       ball[i].oscAngle = random(1);
       ball[i].setTailSize(10);
       ball[i].oscCenter = ball[i].pos;
     }
+  } else if (key == 'z')
+  {
+    background(0);
+    testScene = 100;
   }
 }
