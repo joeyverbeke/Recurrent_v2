@@ -36,8 +36,6 @@ float gradientPos = 0.0;
 float gradientDelta = 0.003;
 color vertColorArray[] = new color[144];
 
-float fadeInPercent[] = new float[144];
-float lineFadeInPos = 0.0;
 
 ////COLORS
 color RED;
@@ -57,9 +55,13 @@ color LIGHT_PINK;
 color LIGHT_GREEN;
 
 int scene = 0;
-int numScenes = 3;
+int numScenes = 10;
 boolean sceneStarted[] = new boolean[numScenes];
 int timeEnteredScene = 0;
+float fadeInPercent[] = new float[144];
+float directionalFadeInPos = 0.0;
+color pixelColor[][] = new color[3][144];
+float colorFadePos = 0;
 
 void setup()
 {
@@ -126,6 +128,14 @@ void setup()
     sceneStarted[i] = false;
   }
 
+  for (int x=0; x<3; x++)
+  {
+    for (int y=0; y<144; y++)
+    {
+      pixelColor[x][y] = BLACK;
+    }
+  }
+
   background(0);
 }
 
@@ -134,18 +144,18 @@ void recurrent()
   switch(scene)
   {
   case 0:
-    float speed = 0.005;
+    float speed1 = 0.005;
 
     if (!sceneStarted[scene])
     {
       for (int i=0; i<144; i++)
       {
-        fadeInPercent[i] = i * speed * -1;
+        fadeInPercent[i] = i * speed1 * -1;
       }
       sceneStarted[scene] = true;
     }
 
-    lineFadeIn(true, speed, ORANGE);
+    directionalFadeIn(true, speed1, ORANGE);
     break;
 
   case 1:
@@ -153,7 +163,6 @@ void recurrent()
     {
       timeEnteredScene = millis();
       sceneStarted[scene] = true;
-      print("entered: " + millis());
     }
     if (millis() - timeEnteredScene > 7000)
     {
@@ -177,195 +186,104 @@ void recurrent()
 
     gaussianSpeckle(ORANGE, RED);
     break;
-  }
-
-  //curtains(true, 1, ORANGE);
-}
-
-void draw()
-{
-  switch(testScene)
-  {
-  case 100:
-    recurrent();
-    break;
-  case 1:
-    background(YELLOW);
-    //background(0);
-    //randomBlocks();
-    break;
-
-  case 2:
-    gaussian();
-    break;
 
   case 3:
-    streaks();
+    float speed3 = 0.0005;
+
+    if (!sceneStarted[scene])
+    {
+      for (int x=0; x<3; x++)
+      {
+        for (int y=0; y<144; y++)
+        {
+          pixelColor[x][y] = get(width/4 + (x * (width/4)), y);
+        }
+      }
+      sceneStarted[scene] = true;
+      colorFadePos = 0;
+    }
+
+    fadeAllToColor(BLUE, speed3);
     break;
 
   case 4:
-    //wave();
-    wave(WHITE, WHITE, 100);
-    break;
+    if (!sceneStarted[scene])
+    {
+      timeEnteredScene = millis();
+      sceneStarted[scene] = true;
+    }
+    if (millis() - timeEnteredScene > 7000)
+    {
+      scene++;
+    }
 
-  case 5:
-    curtains(true, 1, ORANGE);
-    break;
-
-  case 6:
-    curtains(false, 1, BLUE);
-    break;
-
-  case 7: 
-    gaussianSpeckle(ORANGE, YELLOW);
-    break;
-
-  case 8:
-    gaussianSpeckle(ORANGE, RED);
-    break;
-
-  case 9:
     gaussianSpeckle(BLUE, WHITE, GREEN);
     break;
 
-  case 10:
-    unfoldFromMiddle(BLACK, WHITE, 1);
+  case 5:
+    float speed5 = 0.005;
+
+    if (!sceneStarted[scene])
+    {
+      for (int x=0; x<3; x++)
+      {
+        for (int y=0; y<144; y++)
+        {
+          pixelColor[x][y] = get(width/4 + (x * (width/4)), y);
+        }
+      }
+      sceneStarted[scene] = true;
+      colorFadePos = 0;
+    }
+
+    fadeAllToColor(BLACK, speed5);
     break;
 
-  case 11:
-    foldIntoMiddle(color(0), 1);
-    break;
-
-  case 12:
-    if (gradientPos <= 1)
-      gradient(color(0, 0, (int)(gradientPos * 255)), ORANGE);
-    else if (gradientPos > 1 && gradientPos <= 2)
-    {
-      gradient(BLUE, lerpColor(ORANGE, RED, normalizeGradientPos(gradientPos)));
-    } else if (gradientPos > 2 && gradientPos <= 3)
-    {
-      gradient(lerpColor(BLUE, YELLOW, gradientPos - 2), RED);
-    } else if (gradientPos > 3 && gradientPos <= 4)
-    {
-      gradient(lerpColor(YELLOW, CYAN, gradientPos - 3), lerpColor(RED, PURPLE, normalizeGradientPos(gradientPos)));
-    } else if (gradientPos > 4 && gradientPos <= 5)
-    {
-      gradient(lerpColor(CYAN, BLACK, gradientPos - 4), lerpColor(PURPLE, ORANGE, normalizeGradientPos(gradientPos)));
-    } else if (gradientPos > 5)
-      gradientPos = 0;
-
-    swipe(0.75, 1);
-    swipe(0.5, 1);
-    swipe(0.25, 1);
-    break;
-
-  case 13:
-    if (gradientPos <= 1)
-      gradient(lerpColor(RED, BLUE, normalizeGradientPos(gradientPos)), lerpColor(ORANGE, BLUE, normalizeGradientPos(gradientPos)));
-    else if (gradientPos > 1 && gradientPos <= 2)
-    {
-      gradient(BLUE, lerpColor(BLUE, ORANGE, normalizeGradientPos(gradientPos)), BLUE);
-    } else if (gradientPos > 2 && gradientPos < 3)
-    {
-      gradient(lerpColor(BLUE, YELLOW, normalizeGradientPos(gradientPos)), ORANGE, lerpColor(BLUE, YELLOW, normalizeGradientPos(gradientPos)));
-    } else if (gradientPos > 3 - gradientDelta && gradientPos <= 3 + gradientDelta)
+  case 6:
+    if (!sceneStarted[scene])
     {
       for (int i=0; i<144; i++)
       {
-        vertColorArray[i] = get(width/2, i);
-        //println(i + " get:" + hex(get(width/2,i)));
-        //println(i + " array:" + hex(vertColorArray[i]));
+        fadeInPercent[i] = 0;
       }
-      gradientPos+=gradientDelta;
-    } else if (gradientPos > 3 + gradientDelta && gradientPos <= 4)
-    {
-      gradient(YELLOW, 
-        lerpColor(vertColorArray[36], RED, normalizeGradientPos(gradientPos)), 
-        ORANGE, 
-        lerpColor(vertColorArray[108], RED, normalizeGradientPos(gradientPos)), 
-        YELLOW);
-    } else if (gradientPos > 4 && gradientPos <= 5)
-    {
-      gradient(lerpColor(YELLOW, RED, normalizeGradientPos(gradientPos)), 
-        lerpColor(RED, ORANGE, normalizeGradientPos(gradientPos)), 
-        lerpColor(ORANGE, YELLOW, normalizeGradientPos(gradientPos)), 
-        lerpColor(RED, ORANGE, normalizeGradientPos(gradientPos)), 
-        lerpColor(YELLOW, RED, normalizeGradientPos(gradientPos)));
-    } else if (gradientPos > 5 && gradientPos <= 6)
-    {
-      gradient(RED, 
-        lerpColor(ORANGE, RED, normalizeGradientPos(gradientPos)), 
-        lerpColor(YELLOW, ORANGE, normalizeGradientPos(gradientPos)), 
-        lerpColor(ORANGE, RED, normalizeGradientPos(gradientPos)), 
-        RED);
-    } else if (gradientPos > 6 && gradientPos <= 7)
-    {
-      gradient(lerpColor(RED, ORANGE, normalizeGradientPos(gradientPos)), 
-        RED, 
-        lerpColor(ORANGE, RED, normalizeGradientPos(gradientPos)), 
-        RED, 
-        lerpColor(RED, ORANGE, normalizeGradientPos(gradientPos)));
-    } else if (gradientPos > 7 && gradientPos <= 8)
-    {
-      gradient(lerpColor(ORANGE, YELLOW, normalizeGradientPos(gradientPos)), 
-        lerpColor(RED, ORANGE, normalizeGradientPos(gradientPos)), 
-        RED, 
-        lerpColor(RED, ORANGE, normalizeGradientPos(gradientPos)), 
-        lerpColor(ORANGE, YELLOW, normalizeGradientPos(gradientPos)));
-    } else if (gradientPos > 8 && gradientPos <= 9)
-    {
-      gradient(YELLOW, 
-        lerpColor(ORANGE, YELLOW, normalizeGradientPos(gradientPos)), 
-        lerpColor(RED, ORANGE, normalizeGradientPos(gradientPos)), 
-        lerpColor(ORANGE, YELLOW, normalizeGradientPos(gradientPos)), 
-        YELLOW);
-    } else if (gradientPos > 9 && gradientPos <= 10)
-    {
-      gradient(YELLOW, 
-        YELLOW, 
-        lerpColor(ORANGE, YELLOW, normalizeGradientPos(gradientPos)), 
-        YELLOW, 
-        YELLOW);
+      timeEnteredScene = millis();
+      sceneStarted[scene] = true;
     }
 
+    unfold(BLACK, WHITE, 0.005);
     break;
 
-  case 14:
-    background(0);
-    //println("0:" + ball[0].pos + " direction:" + ball[0].direction);
-    //println("1:" + ball[1].pos + " direction:" + ball[1].direction);
-    for (int i=0; i<6; i++)
+  case 7:
+    if (!sceneStarted[scene])
     {
-      ball[i].drawToScreen();
-      ball[i].move(); 
-      for (int j=0; j<6; j++)
+      for (int i=0; i<144; i++)
       {
-        if (j!=i)
-        {
-          if (ball[i].checkIfSamePos(ball[j]))
-          {
-            ball[i].switchDirection();
-            ball[j].switchDirection();
-          }
-        }
+        fadeInPercent[i] = 0;
       }
+      timeEnteredScene = millis();
+      sceneStarted[scene] = true;
     }
-    //println();
+
+    unfold(WHITE, BLACK, 0.005);
     break;
 
-  case 15:
-    background(0);
-
-    for (int i=0; i<6; i++)
+  case 8:
+    if (!sceneStarted[scene])
     {
-      ball[i].setDimPercentage(0.98 - (i*0.05));
-      ball[i].oscillate(ball[i].oscCenter, (i+1) * 0.02, 10); 
-      ball[i].drawToScreen();
-      // hi i love you //
+      for (int i=0; i<144; i++)
+      {
+        fadeInPercent[i] = 0;
+      }
+      timeEnteredScene = millis();
+      sceneStarted[scene] = true;
     }
+
+    unfold(BLACK, WHITE, 0.005);
     break;
   }
 }
+
+
 
 int getColumnPos(int columnNum)
 {
@@ -482,10 +400,16 @@ void foldIntoMiddle(color foldInColor, int speed)
   rect(0, height - foldInPos, width, foldInPos);
 
   foldInPos += speed;
+  if (foldInPos > 77)
+  {
+    scene++;
+    foldInPos = 0;
+  }
 }
 
 void unfoldFromMiddle(color backgroundColor, color unfoldColor, int speed)
 {
+
   if (get(0, 0) != backgroundColor)
     background(backgroundColor);
 
@@ -495,6 +419,70 @@ void unfoldFromMiddle(color backgroundColor, color unfoldColor, int speed)
   rect(0, height/2 - unfoldPos, width, unfoldPos*2);
 
   unfoldPos += speed;
+
+  if (unfoldPos > 77)
+  {
+    scene++;
+    unfoldPos = 0;
+  }
+}
+
+void unfold(color fromColor, color toColor, float speed)
+{
+  if (millis() - timeEnteredScene > speed * 10000 && unfoldPos < 77)
+  {
+    timeEnteredScene = millis();
+    unfoldPos++;
+  }
+
+  println(fadeInPercent[0]);
+
+  for (int i=0; i<unfoldPos; i++)
+  {
+    if (i==76 && fadeInPercent[i] >= 1.0)
+    {
+      for (int j=0; j<144; j++)
+        fadeInPercent[i] = 0;
+
+      unfoldPos = 0;
+      scene++;
+      break;
+    }
+
+    fill(lerpColor(fromColor, toColor, fadeInPercent[i]));
+    rect(0, height/2+i, width, 1);
+    rect(0, height/2-i, width, 1);
+
+    fadeInPercent[i] += speed;
+  }
+}
+
+void foldIn(color fromColor, color toColor, float speed)
+{
+  if (millis() - timeEnteredScene > 1000 && unfoldPos < 77)
+  {
+    timeEnteredScene = millis();
+    unfoldPos++;
+  } 
+
+  for (int i=0; i<unfoldPos; i++)
+  {
+    if (i==76 && fadeInPercent[i] >= 1.0)
+    {
+      for (int j=0; j<144; j++)
+        fadeInPercent[i] = 0;
+
+      unfoldPos = 0;
+      scene++;
+      break;
+    }
+
+    fill(lerpColor(fromColor, toColor, fadeInPercent[i]));
+    rect(0, i, width, 1);
+    rect(0, height-i, width, 1);
+
+    fadeInPercent[i] += speed;
+  }
 }
 
 void gaussianSpeckle(color backgroundColor, color speckleColor)
@@ -536,9 +524,28 @@ void gaussianSpeckle(color backgroundColor, color speckleColor_1, color speckleC
   }
 }
 
-void lineFadeIn(boolean bottomToTop, float speed, color _color)
+void fadeAllToColor(color fadeToColor, float speed)
 {
-  lineFadeInPos++;
+  colorFadePos += speed;  
+
+  for (int x=0; x<3; x++)
+  {
+    for (int y=0; y<144; y++)
+    {
+      fill(lerpColor(pixelColor[x][y], fadeToColor, colorFadePos));
+      rect(width/4 + (x * (width/4)), y, 1, 1);
+    }
+  }
+  if (colorFadePos >= 1)
+  {
+    scene++;
+    colorFadePos = 0;
+  }
+}
+
+void directionalFadeIn(boolean bottomToTop, float speed, color _color)
+{
+  directionalFadeInPos++;
 
   for (int i=0; i<144; i++)
   {
@@ -876,5 +883,190 @@ void keyPressed()
   {
     background(0);
     testScene = 100;
+  }
+}
+
+void draw()
+{
+  switch(testScene)
+  {
+  case 100:
+    recurrent();
+    break;
+  case 1:
+    background(YELLOW);
+    //background(0);
+    //randomBlocks();
+    break;
+
+  case 2:
+    gaussian();
+    break;
+
+  case 3:
+    streaks();
+    break;
+
+  case 4:
+    //wave();
+    wave(WHITE, WHITE, 100);
+    break;
+
+  case 5:
+    curtains(true, 1, ORANGE);
+    break;
+
+  case 6:
+    curtains(false, 1, BLUE);
+    break;
+
+  case 7: 
+    gaussianSpeckle(ORANGE, YELLOW);
+    break;
+
+  case 8:
+    gaussianSpeckle(ORANGE, RED);
+    break;
+
+  case 9:
+    gaussianSpeckle(BLUE, WHITE, GREEN);
+    break;
+
+  case 10:
+    unfoldFromMiddle(BLACK, WHITE, 1);
+    break;
+
+  case 11:
+    foldIntoMiddle(color(0), 1);
+    break;
+
+  case 12:
+    if (gradientPos <= 1)
+      gradient(color(0, 0, (int)(gradientPos * 255)), ORANGE);
+    else if (gradientPos > 1 && gradientPos <= 2)
+    {
+      gradient(BLUE, lerpColor(ORANGE, RED, normalizeGradientPos(gradientPos)));
+    } else if (gradientPos > 2 && gradientPos <= 3)
+    {
+      gradient(lerpColor(BLUE, YELLOW, gradientPos - 2), RED);
+    } else if (gradientPos > 3 && gradientPos <= 4)
+    {
+      gradient(lerpColor(YELLOW, CYAN, gradientPos - 3), lerpColor(RED, PURPLE, normalizeGradientPos(gradientPos)));
+    } else if (gradientPos > 4 && gradientPos <= 5)
+    {
+      gradient(lerpColor(CYAN, BLACK, gradientPos - 4), lerpColor(PURPLE, ORANGE, normalizeGradientPos(gradientPos)));
+    } else if (gradientPos > 5)
+      gradientPos = 0;
+
+    swipe(0.75, 1);
+    swipe(0.5, 1);
+    swipe(0.25, 1);
+    break;
+
+  case 13:
+    if (gradientPos <= 1)
+      gradient(lerpColor(RED, BLUE, normalizeGradientPos(gradientPos)), lerpColor(ORANGE, BLUE, normalizeGradientPos(gradientPos)));
+    else if (gradientPos > 1 && gradientPos <= 2)
+    {
+      gradient(BLUE, lerpColor(BLUE, ORANGE, normalizeGradientPos(gradientPos)), BLUE);
+    } else if (gradientPos > 2 && gradientPos < 3)
+    {
+      gradient(lerpColor(BLUE, YELLOW, normalizeGradientPos(gradientPos)), ORANGE, lerpColor(BLUE, YELLOW, normalizeGradientPos(gradientPos)));
+    } else if (gradientPos > 3 - gradientDelta && gradientPos <= 3 + gradientDelta)
+    {
+      for (int i=0; i<144; i++)
+      {
+        vertColorArray[i] = get(width/2, i);
+        //println(i + " get:" + hex(get(width/2,i)));
+        //println(i + " array:" + hex(vertColorArray[i]));
+      }
+      gradientPos+=gradientDelta;
+    } else if (gradientPos > 3 + gradientDelta && gradientPos <= 4)
+    {
+      gradient(YELLOW, 
+        lerpColor(vertColorArray[36], RED, normalizeGradientPos(gradientPos)), 
+        ORANGE, 
+        lerpColor(vertColorArray[108], RED, normalizeGradientPos(gradientPos)), 
+        YELLOW);
+    } else if (gradientPos > 4 && gradientPos <= 5)
+    {
+      gradient(lerpColor(YELLOW, RED, normalizeGradientPos(gradientPos)), 
+        lerpColor(RED, ORANGE, normalizeGradientPos(gradientPos)), 
+        lerpColor(ORANGE, YELLOW, normalizeGradientPos(gradientPos)), 
+        lerpColor(RED, ORANGE, normalizeGradientPos(gradientPos)), 
+        lerpColor(YELLOW, RED, normalizeGradientPos(gradientPos)));
+    } else if (gradientPos > 5 && gradientPos <= 6)
+    {
+      gradient(RED, 
+        lerpColor(ORANGE, RED, normalizeGradientPos(gradientPos)), 
+        lerpColor(YELLOW, ORANGE, normalizeGradientPos(gradientPos)), 
+        lerpColor(ORANGE, RED, normalizeGradientPos(gradientPos)), 
+        RED);
+    } else if (gradientPos > 6 && gradientPos <= 7)
+    {
+      gradient(lerpColor(RED, ORANGE, normalizeGradientPos(gradientPos)), 
+        RED, 
+        lerpColor(ORANGE, RED, normalizeGradientPos(gradientPos)), 
+        RED, 
+        lerpColor(RED, ORANGE, normalizeGradientPos(gradientPos)));
+    } else if (gradientPos > 7 && gradientPos <= 8)
+    {
+      gradient(lerpColor(ORANGE, YELLOW, normalizeGradientPos(gradientPos)), 
+        lerpColor(RED, ORANGE, normalizeGradientPos(gradientPos)), 
+        RED, 
+        lerpColor(RED, ORANGE, normalizeGradientPos(gradientPos)), 
+        lerpColor(ORANGE, YELLOW, normalizeGradientPos(gradientPos)));
+    } else if (gradientPos > 8 && gradientPos <= 9)
+    {
+      gradient(YELLOW, 
+        lerpColor(ORANGE, YELLOW, normalizeGradientPos(gradientPos)), 
+        lerpColor(RED, ORANGE, normalizeGradientPos(gradientPos)), 
+        lerpColor(ORANGE, YELLOW, normalizeGradientPos(gradientPos)), 
+        YELLOW);
+    } else if (gradientPos > 9 && gradientPos <= 10)
+    {
+      gradient(YELLOW, 
+        YELLOW, 
+        lerpColor(ORANGE, YELLOW, normalizeGradientPos(gradientPos)), 
+        YELLOW, 
+        YELLOW);
+    }
+
+    break;
+
+  case 14:
+    background(0);
+    //println("0:" + ball[0].pos + " direction:" + ball[0].direction);
+    //println("1:" + ball[1].pos + " direction:" + ball[1].direction);
+    for (int i=0; i<6; i++)
+    {
+      ball[i].drawToScreen();
+      ball[i].move(); 
+      for (int j=0; j<6; j++)
+      {
+        if (j!=i)
+        {
+          if (ball[i].checkIfSamePos(ball[j]))
+          {
+            ball[i].switchDirection();
+            ball[j].switchDirection();
+          }
+        }
+      }
+    }
+    //println();
+    break;
+
+  case 15:
+    background(0);
+
+    for (int i=0; i<6; i++)
+    {
+      ball[i].setDimPercentage(0.98 - (i*0.05));
+      ball[i].oscillate(ball[i].oscCenter, (i+1) * 0.02, 10); 
+      ball[i].drawToScreen();
+      // hi i love you //
+    }
+    break;
   }
 }
