@@ -54,7 +54,7 @@ color LIGHT_PURPLE;
 color LIGHT_PINK;
 color LIGHT_GREEN;
 
-int scene = 0;
+int scene = 7;
 int numScenes = 10;
 boolean sceneStarted[] = new boolean[numScenes];
 int timeEnteredScene = 0;
@@ -280,6 +280,19 @@ void recurrent()
 
     unfold(BLACK, WHITE, 0.005);
     break;
+  case 9:
+    if (!sceneStarted[scene])
+    {
+      for (int i=0; i<144; i++)
+      {
+        fadeInPercent[i] = 0;
+      }
+      timeEnteredScene = millis();
+      sceneStarted[scene] = true;
+    }
+
+    wave();
+    break;
   }
 }
 
@@ -373,21 +386,6 @@ void gradient(color color1, color color2, color color3, color color4, color colo
       fill(lerpColor(color4, color5, (float)((i-108)/36.0)));
       rect(0, i, width, 1);
     }
-  }
-}
-
-void wave(color backgroundColor, color waveColor, float speed)
-{
-  background(WHITE);
-  if (get(0, 0) != backgroundColor)
-    background(WHITE);
-
-  for (int x=0; x<144; x++)
-  {
-    waveAmplitude[x][0] += 0.005;
-    //fill((int) 255 * abs(cos(waveAmplitude[x][0])));
-    fill(1.0, 0, abs(cos(waveAmplitude[x][0])));
-    rect(0, x, width, 1);
   }
 }
 
@@ -587,6 +585,38 @@ void curtains(boolean bottomToTop, int speed, color _color)
     {
       rect(getColumnPos(x) - width/16, curtainPosition, width/8, curtainPosition);
     }
+  }
+}
+
+public class Wave
+{
+  float amplitude[][];
+
+  public Wave()
+  {
+    amplitude = new float[3][144]; 
+    for (int x=0; x<3; x++)
+    {
+      for (int y=0; y<144; y++)
+      {
+        amplitude[x][y] = abs(cos( PI * (float)(y/77.0)));
+      }
+    }
+  }
+}
+
+void wave(color backgroundColor, color waveColor, float speed)
+{
+  background(WHITE);
+  if (get(0, 0) != backgroundColor)
+    background(WHITE);
+
+  for (int x=0; x<144; x++)
+  {
+    waveAmplitude[x][0] += 0.005;
+    //fill((int) 255 * abs(cos(waveAmplitude[x][0])));
+    fill(1.0, 0, abs(cos(waveAmplitude[x][0])));
+    rect(0, x, width, 1);
   }
 }
 
