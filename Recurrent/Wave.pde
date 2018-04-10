@@ -97,25 +97,59 @@ public class Wave
         rect(x*(width/3), y, width/3, 1);
       }
     }
-    incrementCycleCount(speed);
   }
 
-  public void cyclePillar(int pillar, float cycleHue, float speed)
+  public void cyclePillar(int pillar, color _color, float speed)
   {
     for (int y=0; y<LED_MAX; y++)
     {
       amplitude[pillar][y] += speed;
-      fill(cycleHue, 0, abs(cos(amplitude[pillar][y])));
+      fill(hue(_color), saturation(_color), abs(cos(amplitude[pillar][y])));
       rect(pillar*(width/3), y, width/3, 1);
     }
-    incrementCycleCount(speed);
+    if (pillar == 1)
+      incrementCycleCount(speed);
+  }
+
+  public void cycleLED(boolean moveUp, int pillar, int speed)
+  {
+    if (frameCount % speed == 0)
+    {
+      if (moveUp)
+      {
+        float temp[] = new float[LED_MAX]; 
+        for (int y=1; y<LED_MAX; y++)
+        {
+          temp[y-1] = amplitude[pillar][y];
+        }
+        temp[LED_MAX-1] = amplitude[pillar][0];
+
+        for (int y=0; y<LED_MAX; y++)
+        {
+          amplitude[pillar][y] = temp[y];
+        }
+      } else
+      {
+        float temp[] = new float[LED_MAX]; 
+        for (int y=0; y<LED_MAX-1; y++)
+        {
+          temp[y+1] = amplitude[pillar][y];
+        }
+        temp[0] = amplitude[pillar][LED_MAX-1];
+
+        for (int y=0; y<LED_MAX; y++)
+        {
+          amplitude[pillar][y] = temp[y];
+        }
+      }
+    }
   }
 
   private void incrementCycleCount(float speed)
   {
     cyclePos+=speed;
     println("cyclePos:" + cyclePos);
-    
+
     if (abs(PI - cyclePos) < speed)
     {
       cyclePos = 0;

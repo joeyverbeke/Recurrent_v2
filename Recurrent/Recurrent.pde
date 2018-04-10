@@ -56,14 +56,16 @@ color LIGHT_PURPLE;
 color LIGHT_PINK;
 color LIGHT_GREEN;
 
-int scene = 9;
-int numScenes = 20;
+int scene = 19;
+int numScenes = 30;
 boolean sceneStarted[] = new boolean[numScenes];
 int timeEnteredScene = 0;
 float fadeInPercent[] = new float[LED_MAX];
 float directionalFadeInPos = 0.0;
 color pixelColor[][] = new color[3][LED_MAX];
 float colorFadePos = 0;
+
+float waveIncrementer = 0;
 
 Wave wave = new Wave();
 
@@ -296,7 +298,7 @@ void recurrent()
     wave.cycle(0.005);
 
     //move to next scene after 4 cycles
-    if (wave.cyclesCompleted >= 4)
+    if (wave.cyclesCompleted >= 2)
     {
       scene++;
       wave.resetAll();
@@ -317,13 +319,12 @@ void recurrent()
     wave.cycle(0.005);
 
     //move to next scene after 4 cycles
-    if (wave.cyclesCompleted >= 4)
+    if (wave.cyclesCompleted >= 2)
     {
       scene++;
       wave.resetAll();
     }
     break;
-
   case 11:
     if (!sceneStarted[scene])
     {
@@ -335,39 +336,220 @@ void recurrent()
       sceneStarted[scene] = true;
     }
 
-    wave.cyclePillar(0, hue(WHITE), 0.0055);
-    wave.cyclePillar(1, hue(WHITE), 0.005);
-    wave.cyclePillar(2, hue(WHITE), 0.0045);
+    wave.cycle(0.005);
+
+    wave.cycleLED(true, 0, 3);
+    wave.cycleLED(true, 2, 3);
 
     //move to next scene after 4 cycles
-    if (wave.cyclesCompleted >= 4)
+    if (wave.cyclesCompleted >= 2)
     {
       scene++;
       wave.resetAll();
     }
     break;
-  }
-  case 11:
+  case 12:
     if (!sceneStarted[scene])
     {
-      wave.setPillar(0, 4);
-      wave.setPillar(1, 3);
-      wave.setPillar(2, 4);
+      wave.setPillar(0, 2);
+      wave.setPillar(1, 4);
+      wave.setPillar(2, 2);
 
       timeEnteredScene = millis();
       sceneStarted[scene] = true;
     }
 
-    wave.cyclePillar(0, hue(ORANGE), 0.0055);
-    wave.cyclePillar(1, hue(WHITE), 0.005);
-    wave.cyclePillar(2, hue(ORANGE), 0.0045);
+    wave.cyclePillar(0, WHITE, 0.0055);
+    wave.cyclePillar(1, WHITE, 0.005);
+    wave.cyclePillar(2, WHITE, 0.0045);
+
+    wave.cycleLED(true, 0, 3);
+    wave.cycleLED(false, 2, 3);
 
     //move to next scene after 4 cycles
-    if (wave.cyclesCompleted >= 4)
+    if (wave.cyclesCompleted >= 2)
     {
       scene++;
       wave.resetAll();
     }
+    break;
+  case 13:
+    if (!sceneStarted[scene])
+    {
+      wave.setPillar(0, 2);
+      wave.setPillar(1, 4);
+      wave.setPillar(2, 2);
+
+      timeEnteredScene = millis();
+      sceneStarted[scene] = true;
+    }
+
+    wave.cyclePillar(0, WHITE, 0.0065);
+    wave.cyclePillar(1, RED, 0.005);
+    wave.cyclePillar(2, WHITE, 0.0035);
+
+    wave.cycleLED(true, 0, 2);
+    wave.cycleLED(false, 2, 2);
+
+    //move to next scene after 4 cycles
+    if (wave.cyclesCompleted >= 2)
+    {
+      scene++;
+      wave.resetAll();
+    }
+    break;
+  case 14:
+    if (!sceneStarted[scene])
+    {
+      wave.setPillar(0, 2);
+      wave.setPillar(1, 4);
+      wave.setPillar(2, 2);
+
+      timeEnteredScene = millis();
+      sceneStarted[scene] = true;
+    }
+
+    wave.cyclePillar(0, ORANGE, 0.005);
+    wave.cyclePillar(1, RED, 0.005);
+    wave.cyclePillar(2, ORANGE, 0.005);
+
+    wave.cycleLED(false, 0, 1);
+    wave.cycleLED(false, 2, 1);
+
+    //move to next scene after 4 cycles
+    if (wave.cyclesCompleted >= 2)
+    {
+      scene++;
+      wave.resetAll();
+    }
+    break;
+  case 15:
+    if (!sceneStarted[scene])
+    {
+      wave.setPillar(0, 5);
+      wave.setPillar(1, 4);
+      wave.setPillar(2, 5);
+
+      timeEnteredScene = millis();
+      sceneStarted[scene] = true;
+    }
+
+    wave.cyclePillar(0, ORANGE, 0.005);
+    wave.cyclePillar(1, RED, 0.0005);
+    wave.cyclePillar(2, ORANGE, 0.005);
+
+    wave.cycleLED(false, 0, 1);
+    wave.cycleLED(true, 1, 1);
+    wave.cycleLED(false, 2, 1);
+
+    //move to next scene after 4 cycles
+    if (wave.cyclesCompleted >= 1)
+    {
+      scene++;
+      wave.resetAll();
+    }
+    break;
+  case 16:
+    float speed16 = 0.005;
+
+    if (!sceneStarted[scene])
+    {
+      for (int x=0; x<3; x++)
+      {
+        for (int y=0; y<LED_MAX; y++)
+        {
+          pixelColor[x][y] = get(width/4 + (x * (width/4)), y);
+        }
+      }
+      sceneStarted[scene] = true;
+      colorFadePos = 0;
+    }
+
+    fadeAllToColor(BLACK, speed16);
+    break;
+  case 17:
+    if (!sceneStarted[scene])
+    {
+      sceneStarted[scene] = true;
+      gradientPos = 0;
+    }
+    gradientExplosion();
+    break;
+  case 18:
+    float speed18 = 0.005;
+
+    if (!sceneStarted[scene])
+    {
+      for (int x=0; x<3; x++)
+      {
+        for (int y=0; y<LED_MAX; y++)
+        {
+          pixelColor[x][y] = get(width/4 + (x * (width/4)), y);
+        }
+      }
+      sceneStarted[scene] = true;
+      colorFadePos = 0;
+    }
+
+    fadeAllToColor(BLACK, speed18);
+    break;
+  case 19:
+    if (!sceneStarted[scene])
+    {
+      timeEnteredScene = millis();
+      sceneStarted[scene] = true;
+
+      ball[0] = new BouncyBall(0, random(LED_MAX), (int)random(2), WHITE);
+      ball[1] = new BouncyBall(1, random(LED_MAX), (int)random(2), WHITE);
+      ball[2] = new BouncyBall(2, random(LED_MAX), (int)random(2), WHITE);
+      ball[3] = new BouncyBall(0, random(LED_MAX), (int)random(2), WHITE);
+      ball[4] = new BouncyBall(1, random(LED_MAX), (int)random(2), WHITE);
+      ball[5] = new BouncyBall(2, random(LED_MAX), (int)random(2), WHITE);
+      for (int i=0; i<6; i++)
+      {
+        ball[i].oscAngle = random(1);
+        ball[i].setTailSize(10);
+        ball[i].oscCenter = ball[i].pos;
+      }
+    }
+    if (millis() - timeEnteredScene > 7000)
+    {
+      scene++;
+    }
+    background(0);
+
+    for (int i=0; i<6; i++)
+    {
+      ball[i].setDimPercentage(0.98 - (4*0.05));
+      ball[i].oscillate(ball[i].oscCenter, (4+1) * 0.02, 10); 
+      ball[i].drawToScreen();
+      // hi i love you //
+    }
+    break;
+  case 20:
+    if (!sceneStarted[scene])
+    {
+      timeEnteredScene = millis();
+      sceneStarted[scene] = true;
+      for (int i=0; i<6; i++)
+      {
+        ball[i].oscAngle = random(1);
+        ball[i].oscCenter = ball[i].pos;
+      }
+    }
+    if (millis() - timeEnteredScene > 7000)
+    {
+      scene++;
+    }
+    background(0);
+    for (int i=0; i<6; i++)
+    {
+      ball[i].setDimPercentage(0.98 - (4*0.05));
+      ball[i].oscillate(ball[i].oscCenter, (4+1) * 0.02, 10); 
+      ball[i].drawToScreen();
+      // hi i love you //
+    }
+
     break;
   }
 }
@@ -593,6 +775,10 @@ void gaussianSpeckle(color backgroundColor, color speckleColor_1, color speckleC
   }
 }
 
+void fadeAllToGradient(color[] fadeToColor, float speed)
+{
+}
+
 void fadeAllToColor(color fadeToColor, float speed)
 {
   colorFadePos += speed;  
@@ -809,6 +995,83 @@ void randomBlocks()
       rect(x*(width/numRows), y*(height/numColumns), width/numRows, height/numColumns);
     }
   }
+}
+
+void gradientExplosion()
+{
+  if (gradientPos <= 1)
+  {
+    gradient(lerpColor(BLACK, RED, normalizeGradientPos(gradientPos)), lerpColor(BLACK, ORANGE, normalizeGradientPos(gradientPos)));
+  }
+  if (gradientPos > 1 && gradientPos <= 2)
+  {
+    gradient(lerpColor(RED, BLUE, normalizeGradientPos(gradientPos)), lerpColor(ORANGE, BLUE, normalizeGradientPos(gradientPos)));
+  } else if (gradientPos > 2 && gradientPos <= 3)
+  {
+    gradient(BLUE, lerpColor(BLUE, ORANGE, normalizeGradientPos(gradientPos)), BLUE);
+  } else if (gradientPos > 3 && gradientPos < 4)
+  {
+    gradient(lerpColor(BLUE, YELLOW, normalizeGradientPos(gradientPos)), ORANGE, lerpColor(BLUE, YELLOW, normalizeGradientPos(gradientPos)));
+  } else if (gradientPos > 4 - gradientDelta && gradientPos <= 4 + gradientDelta)
+  {
+    for (int i=0; i<LED_MAX; i++)
+    {
+      vertColorArray[i] = get(width/2, i);
+      //println(i + " get:" + hex(get(width/2,i)));
+      //println(i + " array:" + hex(vertColorArray[i]));
+    }
+    gradientPos+=gradientDelta;
+  } else if (gradientPos > 4 + gradientDelta && gradientPos <= 5)
+  {
+    gradient(YELLOW, 
+      lerpColor(vertColorArray[36], RED, normalizeGradientPos(gradientPos)), 
+      ORANGE, 
+      lerpColor(vertColorArray[108], RED, normalizeGradientPos(gradientPos)), 
+      YELLOW);
+  } else if (gradientPos > 5 && gradientPos <= 6)
+  {
+    gradient(lerpColor(YELLOW, RED, normalizeGradientPos(gradientPos)), 
+      lerpColor(RED, ORANGE, normalizeGradientPos(gradientPos)), 
+      lerpColor(ORANGE, YELLOW, normalizeGradientPos(gradientPos)), 
+      lerpColor(RED, ORANGE, normalizeGradientPos(gradientPos)), 
+      lerpColor(YELLOW, RED, normalizeGradientPos(gradientPos)));
+  } else if (gradientPos > 6 && gradientPos <= 7)
+  {
+    gradient(RED, 
+      lerpColor(ORANGE, RED, normalizeGradientPos(gradientPos)), 
+      lerpColor(YELLOW, ORANGE, normalizeGradientPos(gradientPos)), 
+      lerpColor(ORANGE, RED, normalizeGradientPos(gradientPos)), 
+      RED);
+  } else if (gradientPos > 7 && gradientPos <= 8)
+  {
+    gradient(lerpColor(RED, ORANGE, normalizeGradientPos(gradientPos)), 
+      RED, 
+      lerpColor(ORANGE, RED, normalizeGradientPos(gradientPos)), 
+      RED, 
+      lerpColor(RED, ORANGE, normalizeGradientPos(gradientPos)));
+  } else if (gradientPos > 8 && gradientPos <= 9)
+  {
+    gradient(lerpColor(ORANGE, YELLOW, normalizeGradientPos(gradientPos)), 
+      lerpColor(RED, ORANGE, normalizeGradientPos(gradientPos)), 
+      RED, 
+      lerpColor(RED, ORANGE, normalizeGradientPos(gradientPos)), 
+      lerpColor(ORANGE, YELLOW, normalizeGradientPos(gradientPos)));
+  } else if (gradientPos > 9 && gradientPos <= 10)
+  {
+    gradient(YELLOW, 
+      lerpColor(ORANGE, YELLOW, normalizeGradientPos(gradientPos)), 
+      lerpColor(RED, ORANGE, normalizeGradientPos(gradientPos)), 
+      lerpColor(ORANGE, YELLOW, normalizeGradientPos(gradientPos)), 
+      YELLOW);
+  } else if (gradientPos > 10 && gradientPos <= 11)
+  {
+    gradient(YELLOW, 
+      YELLOW, 
+      lerpColor(ORANGE, YELLOW, normalizeGradientPos(gradientPos)), 
+      YELLOW, 
+      YELLOW);
+  } else if (gradientPos >= 11)
+    scene++;
 }
 
 void drawRecurrentPixels()
