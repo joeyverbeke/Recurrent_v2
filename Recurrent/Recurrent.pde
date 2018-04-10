@@ -2,6 +2,8 @@ import gohai.glvideo.*;
 OPC opc;
 BouncyBall[] ball = new BouncyBall[10];
 
+int LED_MAX = 144;
+
 int ledCount = 0;
 
 int numRows = 3;
@@ -20,7 +22,7 @@ int streakColor = 0;
 int streaktestScene = 0;
 int numTimesStreaked = 0;
 
-float waveAmplitude[][] = new float[144][3];
+float waveAmplitude[][] = new float[LED_MAX][3];
 
 int curtainPosition = 0;
 
@@ -34,7 +36,7 @@ int foldInPos = 0;
 
 float gradientPos = 0.0;
 float gradientDelta = 0.003;
-color vertColorArray[] = new color[144];
+color vertColorArray[] = new color[LED_MAX];
 
 
 ////COLORS
@@ -54,14 +56,16 @@ color LIGHT_PURPLE;
 color LIGHT_PINK;
 color LIGHT_GREEN;
 
-int scene = 7;
-int numScenes = 10;
+int scene = 9;
+int numScenes = 20;
 boolean sceneStarted[] = new boolean[numScenes];
 int timeEnteredScene = 0;
-float fadeInPercent[] = new float[144];
+float fadeInPercent[] = new float[LED_MAX];
 float directionalFadeInPos = 0.0;
-color pixelColor[][] = new color[3][144];
+color pixelColor[][] = new color[3][LED_MAX];
 float colorFadePos = 0;
+
+Wave wave = new Wave();
 
 void setup()
 {
@@ -111,13 +115,13 @@ void setup()
 
   for (int y=0; y<3; y++)
   {
-    for (int x=0; x<144; x++)
+    for (int x=0; x<LED_MAX; x++)
     {
       waveAmplitude[x][y] = abs(cos( PI * (float)(x/77.0)));
     }
   }
 
-  for (int i=0; i<144; i++)
+  for (int i=0; i<LED_MAX; i++)
   {
     vertColorArray[i] = BLACK;
     fadeInPercent[i] = 0;
@@ -130,7 +134,7 @@ void setup()
 
   for (int x=0; x<3; x++)
   {
-    for (int y=0; y<144; y++)
+    for (int y=0; y<LED_MAX; y++)
     {
       pixelColor[x][y] = BLACK;
     }
@@ -148,7 +152,7 @@ void recurrent()
 
     if (!sceneStarted[scene])
     {
-      for (int i=0; i<144; i++)
+      for (int i=0; i<LED_MAX; i++)
       {
         fadeInPercent[i] = i * speed1 * -1;
       }
@@ -194,7 +198,7 @@ void recurrent()
     {
       for (int x=0; x<3; x++)
       {
-        for (int y=0; y<144; y++)
+        for (int y=0; y<LED_MAX; y++)
         {
           pixelColor[x][y] = get(width/4 + (x * (width/4)), y);
         }
@@ -227,7 +231,7 @@ void recurrent()
     {
       for (int x=0; x<3; x++)
       {
-        for (int y=0; y<144; y++)
+        for (int y=0; y<LED_MAX; y++)
         {
           pixelColor[x][y] = get(width/4 + (x * (width/4)), y);
         }
@@ -242,7 +246,7 @@ void recurrent()
   case 6:
     if (!sceneStarted[scene])
     {
-      for (int i=0; i<144; i++)
+      for (int i=0; i<LED_MAX; i++)
       {
         fadeInPercent[i] = 0;
       }
@@ -256,7 +260,7 @@ void recurrent()
   case 7:
     if (!sceneStarted[scene])
     {
-      for (int i=0; i<144; i++)
+      for (int i=0; i<LED_MAX; i++)
       {
         fadeInPercent[i] = 0;
       }
@@ -270,7 +274,7 @@ void recurrent()
   case 8:
     if (!sceneStarted[scene])
     {
-      for (int i=0; i<144; i++)
+      for (int i=0; i<LED_MAX; i++)
       {
         fadeInPercent[i] = 0;
       }
@@ -280,18 +284,90 @@ void recurrent()
 
     unfold(BLACK, WHITE, 0.005);
     break;
+
   case 9:
+    background(0);
     if (!sceneStarted[scene])
     {
-      for (int i=0; i<144; i++)
-      {
-        fadeInPercent[i] = 0;
-      }
       timeEnteredScene = millis();
       sceneStarted[scene] = true;
     }
 
-    wave();
+    wave.cycle(0.005);
+
+    //move to next scene after 4 cycles
+    if (wave.cyclesCompleted >= 4)
+    {
+      scene++;
+      wave.resetAll();
+    }
+    break;
+
+  case 10:
+    if (!sceneStarted[scene])
+    {
+      wave.setPillar(0, 2);
+      wave.setPillar(1, 3);
+      wave.setPillar(2, 2);
+
+      timeEnteredScene = millis();
+      sceneStarted[scene] = true;
+    }
+
+    wave.cycle(0.005);
+
+    //move to next scene after 4 cycles
+    if (wave.cyclesCompleted >= 4)
+    {
+      scene++;
+      wave.resetAll();
+    }
+    break;
+
+  case 11:
+    if (!sceneStarted[scene])
+    {
+      wave.setPillar(0, 2);
+      wave.setPillar(1, 3);
+      wave.setPillar(2, 2);
+
+      timeEnteredScene = millis();
+      sceneStarted[scene] = true;
+    }
+
+    wave.cyclePillar(0, hue(WHITE), 0.0055);
+    wave.cyclePillar(1, hue(WHITE), 0.005);
+    wave.cyclePillar(2, hue(WHITE), 0.0045);
+
+    //move to next scene after 4 cycles
+    if (wave.cyclesCompleted >= 4)
+    {
+      scene++;
+      wave.resetAll();
+    }
+    break;
+  }
+  case 11:
+    if (!sceneStarted[scene])
+    {
+      wave.setPillar(0, 4);
+      wave.setPillar(1, 3);
+      wave.setPillar(2, 4);
+
+      timeEnteredScene = millis();
+      sceneStarted[scene] = true;
+    }
+
+    wave.cyclePillar(0, hue(ORANGE), 0.0055);
+    wave.cyclePillar(1, hue(WHITE), 0.005);
+    wave.cyclePillar(2, hue(ORANGE), 0.0045);
+
+    //move to next scene after 4 cycles
+    if (wave.cyclesCompleted >= 4)
+    {
+      scene++;
+      wave.resetAll();
+    }
     break;
   }
 }
@@ -311,17 +387,12 @@ float normalizeGradientPos(float _gradientPos)
   return _gradientPos;
 }
 
-
-void bouncyBalls()
-{
-}
-
 void swipe(float speedMultiplier, int size)
 {
   fill(255);
   noStroke();
 
-  int pos = (int)((frameCount * speedMultiplier) - frameWhenEnteredAnimation)%144;
+  int pos = (int)((frameCount * speedMultiplier) - frameWhenEnteredAnimation)%LED_MAX;
 
   for (int i=0; i<size; i++)
   {
@@ -330,17 +401,17 @@ void swipe(float speedMultiplier, int size)
     rect(0, pos-i, width, 1);
   }
 
-  rect(0, ((int)(frameCount/1.5) - frameWhenEnteredAnimation)%144, width, 1);
-  rect(0, (frameCount/2 - frameWhenEnteredAnimation)%144, width, 1);
+  rect(0, ((int)(frameCount/1.5) - frameWhenEnteredAnimation)%LED_MAX, width, 1);
+  rect(0, (frameCount/2 - frameWhenEnteredAnimation)%LED_MAX, width, 1);
 }
 
 void gradient(color color1, color color2)
 {
   gradientPos += gradientDelta;
 
-  for (int i=0; i<144; i++)
+  for (int i=0; i<LED_MAX; i++)
   {
-    fill(lerpColor(color1, color2, (float)(i/144.0)));
+    fill(lerpColor(color1, color2, (i/((float)LED_MAX))));
     rect(0, i, width, 1);
   }
 }
@@ -349,7 +420,7 @@ void gradient(color color1, color color2, color color3)
 {
   gradientPos += gradientDelta;
 
-  for (int i=0; i<144; i++)
+  for (int i=0; i<LED_MAX; i++)
   {
     if (i<72)
     {
@@ -367,7 +438,7 @@ void gradient(color color1, color color2, color color3, color color4, color colo
 {
   gradientPos += gradientDelta;
 
-  for (int i=0; i<144; i++)
+  for (int i=0; i<LED_MAX; i++)
   {
     if (i<36)
     {
@@ -439,7 +510,7 @@ void unfold(color fromColor, color toColor, float speed)
   {
     if (i==76 && fadeInPercent[i] >= 1.0)
     {
-      for (int j=0; j<144; j++)
+      for (int j=0; j<LED_MAX; j++)
         fadeInPercent[i] = 0;
 
       unfoldPos = 0;
@@ -467,7 +538,7 @@ void foldIn(color fromColor, color toColor, float speed)
   {
     if (i==76 && fadeInPercent[i] >= 1.0)
     {
-      for (int j=0; j<144; j++)
+      for (int j=0; j<LED_MAX; j++)
         fadeInPercent[i] = 0;
 
       unfoldPos = 0;
@@ -528,7 +599,7 @@ void fadeAllToColor(color fadeToColor, float speed)
 
   for (int x=0; x<3; x++)
   {
-    for (int y=0; y<144; y++)
+    for (int y=0; y<LED_MAX; y++)
     {
       fill(lerpColor(pixelColor[x][y], fadeToColor, colorFadePos));
       rect(width/4 + (x * (width/4)), y, 1, 1);
@@ -545,7 +616,7 @@ void directionalFadeIn(boolean bottomToTop, float speed, color _color)
 {
   directionalFadeInPos++;
 
-  for (int i=0; i<144; i++)
+  for (int i=0; i<LED_MAX; i++)
   {
     if (i==143 && fadeInPercent[i] >= 1.0)
     {
@@ -588,74 +659,12 @@ void curtains(boolean bottomToTop, int speed, color _color)
   }
 }
 
-public class Wave
-{
-  float amplitude[][];
-
-  public Wave()
-  {
-    amplitude = new float[3][144]; 
-    for (int x=0; x<3; x++)
-    {
-      for (int y=0; y<144; y++)
-      {
-        amplitude[x][y] = abs(cos( PI * (float)(y/77.0)));
-      }
-    }
-  }
-}
-
-void wave(color backgroundColor, color waveColor, float speed)
-{
-  background(WHITE);
-  if (get(0, 0) != backgroundColor)
-    background(WHITE);
-
-  for (int x=0; x<144; x++)
-  {
-    waveAmplitude[x][0] += 0.005;
-    //fill((int) 255 * abs(cos(waveAmplitude[x][0])));
-    fill(1.0, 0, abs(cos(waveAmplitude[x][0])));
-    rect(0, x, width, 1);
-  }
-}
-
-void wave()
-{
-  background(0);
-  for (int y=0; y<numRows; y++)
-  {
-    for (int x=0; x<144; x++)
-    {
-      println("x:" + x + " y:" + y + " " + waveAmplitude[x][y]);
-      waveAmplitude[x][y] += 0.005;
-      /*
-      switch(y)
-       {
-       case 0:
-       fill((int) 255 * abs(cos(waveAmplitude[x][y])), 0, 0);
-       break;
-       case 1:
-       fill(0, (int) 255 * abs(cos(waveAmplitude[x][y])), 0);
-       break;
-       case 2:
-       fill(0, 0, (int) 255 * abs(cos(waveAmplitude[x][y])));
-       break;
-       }
-       */
-      fill((int) 255 * abs(cos(waveAmplitude[x][y])));
-      //fill((int)(sin( PI * ( (waveAmplitude[x][y] +frameCount) / (144 + frameCount)) ) * 255));
-      rect(width/4 + (y * (width/4)), x, 1, 1);
-    }
-  }
-}
-
 void streaks()
 {  
   switch(streaktestScene)
   {
   case 0:
-    if (streak_x >= 144)
+    if (streak_x >= LED_MAX)
     {
       if (streak_y >= 2)
       {
@@ -675,7 +684,7 @@ void streaks()
       streak_x = 0;
     } else
     {
-      rect(width/4 + (streak_y * (width/4)), 144-streak_x, 1, streak_x);
+      rect(width/4 + (streak_y * (width/4)), LED_MAX-streak_x, 1, streak_x);
       streak_x+=15;
     }
     break;
@@ -805,17 +814,17 @@ void randomBlocks()
 void drawRecurrentPixels()
 {
 
-  for (int i=0; i<144; i++)
+  for (int i=0; i<LED_MAX; i++)
   {
     opc.led(ledCount, width/4, i); 
     ledCount++;
   }
-  for (int i=0; i<144; i++)
+  for (int i=0; i<LED_MAX; i++)
   {
     opc.led(ledCount, width/2, i); 
     ledCount++;
   }
-  for (int i=0; i<144; i++)
+  for (int i=0; i<LED_MAX; i++)
   {
     opc.led(ledCount, width - width/4, i); 
     ledCount++;
@@ -886,23 +895,23 @@ void keyPressed()
   {
     testScene = 14;
     background(0);
-    ball[0] = new BouncyBall((int)random(3), (int)random(144), (int)random(2), color((int)random(255), (int)random(255), 255), random(1.5));
-    ball[1] = new BouncyBall((int)random(3), (int)random(144), (int)random(2), color((int)random(255), (int)random(255), 255), random(1.5));
-    ball[2] = new BouncyBall((int)random(3), (int)random(144), (int)random(2), color((int)random(255), (int)random(255), 255), random(1.5));
-    ball[3] = new BouncyBall((int)random(3), (int)random(144), (int)random(2), color((int)random(255), (int)random(255), 255), random(1.5));
-    ball[4] = new BouncyBall((int)random(3), (int)random(144), (int)random(2), color((int)random(255), (int)random(255), 255), random(1.5));
-    ball[5] = new BouncyBall((int)random(3), (int)random(144), (int)random(2), color((int)random(255), (int)random(255), 255), random(1.5));
+    ball[0] = new BouncyBall((int)random(3), (int)random(LED_MAX), (int)random(2), color((int)random(255), (int)random(255), 255), random(1.5));
+    ball[1] = new BouncyBall((int)random(3), (int)random(LED_MAX), (int)random(2), color((int)random(255), (int)random(255), 255), random(1.5));
+    ball[2] = new BouncyBall((int)random(3), (int)random(LED_MAX), (int)random(2), color((int)random(255), (int)random(255), 255), random(1.5));
+    ball[3] = new BouncyBall((int)random(3), (int)random(LED_MAX), (int)random(2), color((int)random(255), (int)random(255), 255), random(1.5));
+    ball[4] = new BouncyBall((int)random(3), (int)random(LED_MAX), (int)random(2), color((int)random(255), (int)random(255), 255), random(1.5));
+    ball[5] = new BouncyBall((int)random(3), (int)random(LED_MAX), (int)random(2), color((int)random(255), (int)random(255), 255), random(1.5));
     println();
   } else if (key == 't')
   {
     testScene = 15;
     background(0);
-    ball[0] = new BouncyBall(0, random(144), (int)random(2), color(1.0, 1.0, 1.0));
-    ball[1] = new BouncyBall(1, random(144), (int)random(2), color(1.0, 1.0, 1.0));
-    ball[2] = new BouncyBall(2, random(144), (int)random(2), color(1.0, 1.0, 1.0));
-    ball[3] = new BouncyBall(0, random(144), (int)random(2), color(0.5, 0, 1.0));
-    ball[4] = new BouncyBall(1, random(144), (int)random(2), color(0.5, 0, 1.0));
-    ball[5] = new BouncyBall(2, random(144), (int)random(2), color(0.5, 0, 1.0));
+    ball[0] = new BouncyBall(0, random(LED_MAX), (int)random(2), color(1.0, 1.0, 1.0));
+    ball[1] = new BouncyBall(1, random(LED_MAX), (int)random(2), color(1.0, 1.0, 1.0));
+    ball[2] = new BouncyBall(2, random(LED_MAX), (int)random(2), color(1.0, 1.0, 1.0));
+    ball[3] = new BouncyBall(0, random(LED_MAX), (int)random(2), color(0.5, 0, 1.0));
+    ball[4] = new BouncyBall(1, random(LED_MAX), (int)random(2), color(0.5, 0, 1.0));
+    ball[5] = new BouncyBall(2, random(LED_MAX), (int)random(2), color(0.5, 0, 1.0));
     for (int i=0; i<6; i++)
     {
       ball[i].oscAngle = random(1);
@@ -939,7 +948,7 @@ void draw()
 
   case 4:
     //wave();
-    wave(WHITE, WHITE, 100);
+    //wave(WHITE, WHITE, 100);
     break;
 
   case 5:
@@ -1004,7 +1013,7 @@ void draw()
       gradient(lerpColor(BLUE, YELLOW, normalizeGradientPos(gradientPos)), ORANGE, lerpColor(BLUE, YELLOW, normalizeGradientPos(gradientPos)));
     } else if (gradientPos > 3 - gradientDelta && gradientPos <= 3 + gradientDelta)
     {
-      for (int i=0; i<144; i++)
+      for (int i=0; i<LED_MAX; i++)
       {
         vertColorArray[i] = get(width/2, i);
         //println(i + " get:" + hex(get(width/2,i)));
