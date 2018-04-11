@@ -98,7 +98,7 @@ void setup()
   opc = new OPC(this, "127.0.0.1", 7890);
 
   //drawRecurrentPixels();
-  
+
   /*
   for (int y=0; y<numColumns; y++)
    {
@@ -208,10 +208,11 @@ void recurrent()
     break;
 
   case 3:
-    float speed3 = 0.005;
+    float speed3 = 0.0008;
 
     if (!sceneStarted[scene])
     {
+      /*
       for (int x=0; x<3; x++)
       {
         for (int y=0; y<LED_MAX; y++)
@@ -219,6 +220,7 @@ void recurrent()
           pixelColor[x][y] = get(width/4 + (x * (width/4)), y);
         }
       }
+      */
       sceneStarted[scene] = true;
       colorFadePos = 0;
     }
@@ -231,7 +233,7 @@ void recurrent()
     {
       timeEnteredScene = millis();
       sceneStarted[scene] = true;
-      
+
       for (int x=0; x<3; x++)
       {
         for (int y=0; y<LED_MAX; y++)
@@ -249,10 +251,11 @@ void recurrent()
     break;
 
   case 5:
-    float speed5 = 0.005;
+    float speed5 = 0.0008;
 
     if (!sceneStarted[scene])
     {
+      /*
       for (int x=0; x<3; x++)
       {
         for (int y=0; y<LED_MAX; y++)
@@ -260,6 +263,7 @@ void recurrent()
           pixelColor[x][y] = get(width/4 + (x * (width/4)), y);
         }
       }
+      */
       sceneStarted[scene] = true;
       colorFadePos = 0;
     }
@@ -471,6 +475,13 @@ void recurrent()
     //move to next scene after 4 cycles
     if (wave.cyclesCompleted >= 1)
     {
+      for (int x=0; x<3; x++)
+      {
+        for (int y=0; y<LED_MAX; y++)
+        {
+          pixelColor[x][y] = get(width/4 + (x * (width/4)), y);
+        }
+      }
       scene++;
       wave.resetAll();
     }
@@ -480,6 +491,7 @@ void recurrent()
 
     if (!sceneStarted[scene])
     {
+      /*
       for (int x=0; x<3; x++)
       {
         for (int y=0; y<LED_MAX; y++)
@@ -487,6 +499,7 @@ void recurrent()
           pixelColor[x][y] = get(width/4 + (x * (width/4)), y);
         }
       }
+      */
       sceneStarted[scene] = true;
       colorFadePos = 0;
     }
@@ -650,6 +663,17 @@ void recurrent()
     break;
 
   case 23:
+    if (!sceneStarted[scene])
+    {
+      for (int i=0; i<LED_MAX; i++)
+      {
+        fadeInPercent[i] = 0;
+      }
+      timeEnteredScene = millis();
+      sceneStarted[scene] = true;
+      foldInPos = 0;
+    }
+    
     foldIntoMiddle(WHITE, 1);
 
     break;
@@ -657,11 +681,11 @@ void recurrent()
 
   if (scene >= 24)
   {
-    scene = 0;
     for (int i=0; i<=scene; i++)
     {
       sceneStarted[i] = false;
     }
+    scene = 0;
   }
 }
 
