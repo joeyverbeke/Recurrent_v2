@@ -214,13 +214,13 @@ void recurrent()
     {
       /*
       for (int x=0; x<3; x++)
-      {
-        for (int y=0; y<LED_MAX; y++)
-        {
-          pixelColor[x][y] = get(width/4 + (x * (width/4)), y);
-        }
-      }
-      */
+       {
+       for (int y=0; y<LED_MAX; y++)
+       {
+       pixelColor[x][y] = get(width/4 + (x * (width/4)), y);
+       }
+       }
+       */
       sceneStarted[scene] = true;
       colorFadePos = 0;
     }
@@ -257,13 +257,13 @@ void recurrent()
     {
       /*
       for (int x=0; x<3; x++)
-      {
-        for (int y=0; y<LED_MAX; y++)
-        {
-          pixelColor[x][y] = get(width/4 + (x * (width/4)), y);
-        }
-      }
-      */
+       {
+       for (int y=0; y<LED_MAX; y++)
+       {
+       pixelColor[x][y] = get(width/4 + (x * (width/4)), y);
+       }
+       }
+       */
       sceneStarted[scene] = true;
       colorFadePos = 0;
     }
@@ -465,7 +465,7 @@ void recurrent()
     }
 
     wave.cyclePillar(0, ORANGE, 0.005);
-    wave.cyclePillar(1, RED, 0.005);////
+    wave.cyclePillar(1, RED, 0.001);////
     wave.cyclePillar(2, ORANGE, 0.005);
 
     wave.cycleLED(false, 0, 1);
@@ -473,7 +473,7 @@ void recurrent()
     wave.cycleLED(false, 2, 1);
 
     //move to next scene after 4 cycles
-    if (wave.cyclesCompleted >= 1)
+    if (wave.cyclesCompleted >= 2)
     {
       for (int x=0; x<3; x++)
       {
@@ -493,13 +493,13 @@ void recurrent()
     {
       /*
       for (int x=0; x<3; x++)
-      {
-        for (int y=0; y<LED_MAX; y++)
-        {
-          pixelColor[x][y] = get(width/4 + (x * (width/4)), y);
-        }
-      }
-      */
+       {
+       for (int y=0; y<LED_MAX; y++)
+       {
+       pixelColor[x][y] = get(width/4 + (x * (width/4)), y);
+       }
+       }
+       */
       sceneStarted[scene] = true;
       colorFadePos = 0;
     }
@@ -673,13 +673,30 @@ void recurrent()
       sceneStarted[scene] = true;
       foldInPos = 0;
     }
-    
-    foldIntoMiddle(WHITE, 1);
+
+    foldIn(BLACK, WHITE, 1);
+
+    break;
+
+  case 24:
+  background(WHITE);
+    if (!sceneStarted[scene])
+    {
+      for (int i=0; i<LED_MAX; i++)
+      {
+        fadeInPercent[i] = 0;
+      }
+      timeEnteredScene = millis();
+      sceneStarted[scene] = true;
+      foldInPos = 0;
+    }
+
+    foldIn(WHITE, BLACK, 1);
 
     break;
   }
 
-  if (scene >= 24)
+  if (scene >= 25)
   {
     for (int i=0; i<=scene; i++)
     {
