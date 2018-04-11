@@ -2,27 +2,31 @@ import gohai.glvideo.*;
 OPC opc;
 BouncyBall[] ball = new BouncyBall[10];
 
-int LED_MAX = 144;
+int LED_MAX = 128;
 
 int ledCount = 0;
 
 int numRows = 3;
 int numColumns = 6;
 
-int testScene = 2;
+int testScene = 100;
 
+/*
 boolean squares[][] = new boolean[numRows][numColumns];
 color squareColors[][] = new color[numRows][numColumns];
+*/
 
 color gaussianColor[] = new color[numRows];
 
+/*
 int streak_y = 0;
 int streak_x = 0;
 int streakColor = 0;
 int streaktestScene = 0;
 int numTimesStreaked = 0;
+*/
 
-float waveAmplitude[][] = new float[LED_MAX][3];
+//float waveAmplitude[][] = new float[LED_MAX][3];
 
 int curtainPosition = 0;
 
@@ -56,7 +60,7 @@ color LIGHT_PURPLE;
 color LIGHT_PINK;
 color LIGHT_GREEN;
 
-int scene = 19;
+int scene = 0;
 int numScenes = 30;
 boolean sceneStarted[] = new boolean[numScenes];
 int timeEnteredScene = 0;
@@ -71,7 +75,7 @@ Wave wave = new Wave();
 
 void setup()
 {
-  size(100, 144, P2D);
+  size(100, 128, P2D);
   colorMode(HSB, 1.0, 1.0, 1.0, 1.0);
 
   RED = color(1.0, 1.0, 1.0);
@@ -93,8 +97,8 @@ void setup()
   // Connect to the local instance of fcserver
   opc = new OPC(this, "127.0.0.1", 7890);
 
-  //drawRecurrentPixels();
-
+  drawRecurrentPixels();
+/*
   for (int y=0; y<numColumns; y++)
   {
     for (int x=0; x<numRows; x++)
@@ -103,7 +107,7 @@ void setup()
       squareColors[x][y] = BLACK;
     }
   }
-
+*/
   for (int x=0; x<numRows; x++)
   {
     gaussianColor[x] = color((int)random(255), (int)random(255), (int)random(255), 10);
@@ -114,15 +118,15 @@ void setup()
     stroke(255);
     fill(255);
   }
-
+/*
   for (int y=0; y<3; y++)
   {
     for (int x=0; x<LED_MAX; x++)
     {
-      waveAmplitude[x][y] = abs(cos( PI * (float)(x/77.0)));
+      waveAmplitude[x][y] = abs(cos( PI * (float)(x/(LED_MAX/2))));
     }
   }
-
+*/
   for (int i=0; i<LED_MAX; i++)
   {
     vertColorArray[i] = BLACK;
@@ -147,6 +151,7 @@ void setup()
 
 void recurrent()
 {
+  background(0);
   switch(scene)
   {
   case 0:
@@ -194,7 +199,7 @@ void recurrent()
     break;
 
   case 3:
-    float speed3 = 0.0005;
+    float speed3 = 0.005;
 
     if (!sceneStarted[scene])
     {
@@ -647,7 +652,6 @@ void recurrent()
     {
       ball[i].drawToScreen();
       ball[i].move(); 
-      println("ASDF");
       for (int j=0; j<6; j++)
       {
         if (j!=i)
@@ -762,7 +766,7 @@ void foldIntoMiddle(color foldInColor, int speed)
   rect(0, height - foldInPos, width, foldInPos);
 
   foldInPos += speed;
-  if (foldInPos > 77)
+  if (foldInPos > LED_MAX/2)
   {
     scene++;
     foldInPos = 0;
@@ -782,7 +786,7 @@ void unfoldFromMiddle(color backgroundColor, color unfoldColor, int speed)
 
   unfoldPos += speed;
 
-  if (unfoldPos > 77)
+  if (unfoldPos > LED_MAX/2)
   {
     scene++;
     unfoldPos = 0;
@@ -791,7 +795,7 @@ void unfoldFromMiddle(color backgroundColor, color unfoldColor, int speed)
 
 void unfold(color fromColor, color toColor, float speed)
 {
-  if (millis() - timeEnteredScene > speed * 10000 && unfoldPos < 77)
+  if (millis() - timeEnteredScene > speed * 10000 && unfoldPos < LED_MAX/2)
   {
     timeEnteredScene = millis();
     unfoldPos++;
@@ -821,7 +825,7 @@ void unfold(color fromColor, color toColor, float speed)
 
 void foldIn(color fromColor, color toColor, float speed)
 {
-  if (millis() - timeEnteredScene > 1000 && unfoldPos < 77)
+  if (millis() - timeEnteredScene > 1000 && unfoldPos < LED_MAX/2)
   {
     timeEnteredScene = millis();
     unfoldPos++;
@@ -860,7 +864,7 @@ void gaussianSpeckle(color backgroundColor, color speckleColor)
 
   for (int x=0; x<numRows; x++)
   {
-    rect(width/4 + (x * (width/4)), 77 + randomGaussian()*77, 1, 1);
+    rect(width/4 + (x * (width/4)), LED_MAX/2 + randomGaussian()*(LED_MAX/2), 1, 1);
   }
 }
 
@@ -882,7 +886,7 @@ void gaussianSpeckle(color backgroundColor, color speckleColor_1, color speckleC
 
   for (int x=0; x<numRows; x++)
   {
-    rect(width/4 + (x * (width/4)), 77 + randomGaussian()*77, 1, 1);
+    rect(width/4 + (x * (width/4)), LED_MAX/2 + randomGaussian()*(LED_MAX/2), 1, 1);
   }
 }
 
@@ -956,6 +960,7 @@ void curtains(boolean bottomToTop, int speed, color _color)
   }
 }
 
+/*
 void streaks()
 {  
   switch(streaktestScene)
@@ -1043,7 +1048,7 @@ void streaks()
     break;
   }
 }
-
+*/
 void gaussian()
 {
 
@@ -1064,10 +1069,10 @@ void gaussian()
     //noStroke(); //use for actual implementation
     stroke(gaussianColor[x]);
     fill(gaussianColor[x]);
-    rect(width/4 + (x * (width/4)), 77 + randomGaussian()*77, 1, 1);
+    rect(width/4 + (x * (width/4)), LED_MAX/2 + randomGaussian()*(LED_MAX/2), 1, 1);
   }
 }
-
+/*
 void randomBlocks()
 {
   if (frameCount%100 == 0)
@@ -1107,7 +1112,7 @@ void randomBlocks()
     }
   }
 }
-
+*/
 void gradientExplosion()
 {
   if (gradientPos <= 1)
@@ -1188,21 +1193,22 @@ void gradientExplosion()
 void drawRecurrentPixels()
 {
 
-  for (int i=0; i<LED_MAX; i++)
+  for (int i=LED_MAX-1; i>=0; i--)
   {
     opc.led(ledCount, width/4, i); 
     ledCount++;
   }
-  for (int i=0; i<LED_MAX; i++)
+  for (int i=LED_MAX-1; i>=0; i--)
   {
     opc.led(ledCount, width/2, i); 
     ledCount++;
   }
-  for (int i=0; i<LED_MAX; i++)
+  for (int i=LED_MAX-1; i>=0; i--)
   {
     opc.led(ledCount, width - width/4, i); 
     ledCount++;
   }
+  println(ledCount);
 }
 
 void keyPressed()
@@ -1317,7 +1323,7 @@ void draw()
     break;
 
   case 3:
-    streaks();
+    //streaks();
     break;
 
   case 4:

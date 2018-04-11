@@ -109,7 +109,7 @@ public class BouncyBall {
       
       pos += speed;
 
-      if (pos >= 144)
+      if (pos >= 128)
         direction = 0;
     } else
     {
@@ -150,7 +150,7 @@ public class BouncyBall {
     if (direction == 1)
     {
       pos += speed;
-      if (pos >= 144)
+      if (pos >= 128)
         direction = 0;
     } else 
     {
