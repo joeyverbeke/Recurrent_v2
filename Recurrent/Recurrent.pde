@@ -512,7 +512,7 @@ void recurrent()
         ball[i].oscCenter = ball[i].pos;
       }
     }
-    if (millis() - timeEnteredScene > 7000)
+    if (millis() - timeEnteredScene > 5000)
     {
       scene++;
     }
@@ -531,13 +531,21 @@ void recurrent()
     {
       timeEnteredScene = millis();
       sceneStarted[scene] = true;
+
+      ball[0] = new BouncyBall(0, random(LED_MAX), (int)random(2), WHITE);
+      ball[1] = new BouncyBall(1, random(LED_MAX), (int)random(2), WHITE);
+      ball[2] = new BouncyBall(2, random(LED_MAX), (int)random(2), WHITE);
+      ball[3] = new BouncyBall(0, random(LED_MAX), (int)random(2), WHITE);
+      ball[4] = new BouncyBall(1, random(LED_MAX), (int)random(2), WHITE);
+      ball[5] = new BouncyBall(2, random(LED_MAX), (int)random(2), WHITE);
       for (int i=0; i<6; i++)
       {
         ball[i].oscAngle = random(1);
+        ball[i].setTailSize(10);
         ball[i].oscCenter = ball[i].pos;
       }
     }
-    if (millis() - timeEnteredScene > 7000)
+    if (millis() - timeEnteredScene > 5000)
     {
       scene++;
     }
@@ -548,6 +556,109 @@ void recurrent()
       ball[i].oscillate(ball[i].oscCenter, (4+1) * 0.02, 10); 
       ball[i].drawToScreen();
       // hi i love you //
+    }
+    break;
+  case 21:
+    if (!sceneStarted[scene])
+    {
+      timeEnteredScene = millis();
+      sceneStarted[scene] = true;
+
+      ball[0] = new BouncyBall(0, random(LED_MAX), (int)random(2), WHITE);
+      ball[1] = new BouncyBall(1, random(LED_MAX), (int)random(2), WHITE);
+      ball[2] = new BouncyBall(2, random(LED_MAX), (int)random(2), WHITE);
+      ball[3] = new BouncyBall(0, random(LED_MAX), (int)random(2), WHITE);
+      ball[4] = new BouncyBall(1, random(LED_MAX), (int)random(2), WHITE);
+      ball[5] = new BouncyBall(2, random(LED_MAX), (int)random(2), WHITE);
+      for (int i=0; i<6; i++)
+      {
+        ball[i].oscAngle = random(1);
+        ball[i].setTailSize(10);
+        ball[i].oscCenter = ball[i].pos;
+      }
+    }
+    if (millis() - timeEnteredScene > 5000)
+    {
+      scene++;
+    }
+    background(0);
+    for (int i=0; i<6; i++)
+    {
+      ball[i].setDimPercentage(0.98 - (4*0.05));
+      ball[i].oscillate(ball[i].oscCenter, (4+1) * 0.02, 10); 
+      ball[i].drawToScreen();
+      // hi i love you //
+    }
+    break;
+  case 22:
+    if (!sceneStarted[scene])
+    {
+      timeEnteredScene = millis();
+      sceneStarted[scene] = true;
+
+      ball[0] = new BouncyBall(0, random(LED_MAX), (int)random(2), WHITE);
+      ball[1] = new BouncyBall(1, random(LED_MAX), (int)random(2), WHITE);
+      ball[2] = new BouncyBall(2, random(LED_MAX), (int)random(2), WHITE);
+      ball[3] = new BouncyBall(0, random(LED_MAX), (int)random(2), WHITE);
+      ball[4] = new BouncyBall(1, random(LED_MAX), (int)random(2), WHITE);
+      ball[5] = new BouncyBall(2, random(LED_MAX), (int)random(2), WHITE);
+      for (int i=0; i<6; i++)
+      {
+        ball[i].oscAngle = random(1);
+        ball[i].setTailSize(10);
+        ball[i].oscCenter = ball[i].pos;
+      }
+    }
+    if (millis() - timeEnteredScene > 5000)
+    {
+      scene++;
+    }
+    background(0);
+    for (int i=0; i<6; i++)
+    {
+      ball[i].setDimPercentage(0.98 - (4*0.05));
+      ball[i].oscillate(ball[i].oscCenter, (4+1) * 0.02, 10); 
+      ball[i].drawToScreen();
+      // hi i love you //
+    }
+    break;
+
+  case 23:
+    background(0);
+
+    if (!sceneStarted[scene])
+    {
+      timeEnteredScene = millis();
+      sceneStarted[scene] = true;
+
+      ball[0] = new BouncyBall((int)random(3), (int)random(LED_MAX), (int)random(2), WHITE);
+      ball[1] = new BouncyBall((int)random(3), (int)random(LED_MAX), (int)random(2), WHITE);
+      ball[2] = new BouncyBall((int)random(3), (int)random(LED_MAX), (int)random(2), WHITE);
+      ball[3] = new BouncyBall((int)random(3), (int)random(LED_MAX), (int)random(2), RED);
+      ball[4] = new BouncyBall((int)random(3), (int)random(LED_MAX), (int)random(2), RED);
+      ball[5] = new BouncyBall((int)random(3), (int)random(LED_MAX), (int)random(2), RED);
+    }
+    if (millis() - timeEnteredScene > 10000)
+    {
+      scene++;
+    }
+
+    for (int i=0; i<6; i++)
+    {
+      ball[i].drawToScreen();
+      ball[i].move(); 
+      println("ASDF");
+      for (int j=0; j<6; j++)
+      {
+        if (j!=i)
+        {
+          if (ball[i].checkIfSamePos(ball[j]))
+          {
+            ball[i].switchDirection();
+            ball[j].switchDirection();
+          }
+        }
+      }
     }
 
     break;
@@ -1338,8 +1449,6 @@ void draw()
 
   case 14:
     background(0);
-    //println("0:" + ball[0].pos + " direction:" + ball[0].direction);
-    //println("1:" + ball[1].pos + " direction:" + ball[1].direction);
     for (int i=0; i<6; i++)
     {
       ball[i].drawToScreen();
@@ -1356,7 +1465,6 @@ void draw()
         }
       }
     }
-    //println();
     break;
 
   case 15:
