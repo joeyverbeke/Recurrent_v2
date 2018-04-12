@@ -671,15 +671,14 @@ void recurrent()
       }
       timeEnteredScene = millis();
       sceneStarted[scene] = true;
-      foldInPos = 0;
+      unfoldPos = 0;
     }
 
-    foldIn(BLACK, WHITE, 1);
-
+    unfold(BLACK, WHITE, 0.005);
     break;
 
   case 24:
-  background(WHITE);
+    background(WHITE);
     if (!sceneStarted[scene])
     {
       for (int i=0; i<LED_MAX; i++)
@@ -688,15 +687,29 @@ void recurrent()
       }
       timeEnteredScene = millis();
       sceneStarted[scene] = true;
-      foldInPos = 0;
+      unfoldPos = 0;
     }
 
-    foldIn(WHITE, BLACK, 1);
+    unfold(WHITE, BLACK, 0.005);
+    break;
 
+  case 25:
+    if (!sceneStarted[scene])
+    {
+      for (int i=0; i<LED_MAX; i++)
+      {
+        fadeInPercent[i] = 0;
+      }
+      timeEnteredScene = millis();
+      sceneStarted[scene] = true;
+      unfoldPos = 0;
+    }
+
+    unfold(BLACK, WHITE, 0.005);
     break;
   }
 
-  if (scene >= 25)
+  if (scene >= 26)
   {
     for (int i=0; i<=scene; i++)
     {
@@ -807,20 +820,20 @@ void unfold(color fromColor, color toColor, float speed)
 
 void foldIn(color fromColor, color toColor, float speed)
 {
-  if (millis() - timeEnteredScene > 1000 && unfoldPos < LED_MAX/2)
+  if (millis() - timeEnteredScene > 1000 && foldInPos < LED_MAX/2)
   {
     timeEnteredScene = millis();
-    unfoldPos++;
+    foldInPos++;
   } 
 
-  for (int i=0; i<unfoldPos; i++)
+  for (int i=0; i<foldInPos; i++)
   {
     if (i==(LED_MAX)/2 && fadeInPercent[i] >= 1.0)
     {
       for (int j=0; j<LED_MAX; j++)
         fadeInPercent[i] = 0;
 
-      unfoldPos = 0;
+      foldInPos = 0;
       scene++;
       break;
     }
